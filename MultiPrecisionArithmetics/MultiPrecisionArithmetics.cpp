@@ -4,19 +4,108 @@
 #include "stdafx.h"
 #include "MultiPrecisionArithmetics.h"
 
+using namespace MultiPrecisionArithmetics;
 
-// This is an example of an exported variable
-MULTIPRECISIONARITHMETICS_API int nMultiPrecisionArithmetics=0;
 
-// This is an example of an exported function.
-MULTIPRECISIONARITHMETICS_API int fnMultiPrecisionArithmetics(void)
+UBigNum::UBigNum(void)
 {
-    return 42;
 }
 
-// This is the constructor of a class that has been exported.
-// see MultiPrecisionArithmetics.h for the class definition
-CMultiPrecisionArithmetics::CMultiPrecisionArithmetics()
+MultiPrecisionArithmetics::UBigNum::UBigNum(const UBigNum & x)
 {
-    return;
+}
+
+int MultiPrecisionArithmetics::UBigNum::compactBitLen(void)
+{
+    return 0;
+}
+
+std::string UBigNum::toDecString()
+{
+    return "0";
+}
+
+std::string UBigNum::toHexString()
+{
+    return "0";
+}
+
+UBigNum UBigNum::fromHexString(const std::string&)
+{
+    return UBigNum();
+}
+
+UBigNum UBigNum::fromDecString(const std::string&)
+{
+    return UBigNum();
+}
+
+int UBigNum::cmp(const UBigNum &, const UBigNum &)
+{
+    return 0;
+}
+
+UBigNum & MultiPrecisionArithmetics::UBigNum::operator=(const UBigNum & y)
+{
+    return *this;
+}
+
+bool MultiPrecisionArithmetics::UBigNum::operator==(const UBigNum & y) const
+{
+    return false;
+}
+
+bool MultiPrecisionArithmetics::UBigNum::operator!=(const UBigNum & y) const
+{
+    return false;
+}
+
+bool MultiPrecisionArithmetics::UBigNum::operator<=(const UBigNum & y) const
+{
+    return false;
+}
+
+bool MultiPrecisionArithmetics::UBigNum::operator<(const UBigNum & y) const
+{
+    return false;
+}
+
+bool MultiPrecisionArithmetics::UBigNum::operator>(const UBigNum & y) const
+{
+    return false;
+}
+
+bool MultiPrecisionArithmetics::UBigNum::operator>=(const UBigNum & y) const
+{
+    return false;
+}
+
+UBigNum & MultiPrecisionArithmetics::UBigNum::operator+=(const UBigNum & y)
+{
+    return *this;
+}
+
+UBigNum & MultiPrecisionArithmetics::UBigNum::operator-=(const UBigNum & y)
+{
+    return *this;
+}
+
+UBigNum & MultiPrecisionArithmetics::UBigNum::operator*=(const UBigNum & y)
+{
+    return *this;
+}
+
+const UBigNum MultiPrecisionArithmetics::UBigNum::operator+(const UBigNum & y) const
+{
+    return UBigNum();
+}
+
+const UBigNum MultiPrecisionArithmetics::UBigNum::operator-(const UBigNum & y) const
+{
+    return UBigNum();
+}
+
+const UBigNum MultiPrecisionArithmetics::UBigNum::operator*(const UBigNum & y) const
+{
+    return UBigNum();
 }

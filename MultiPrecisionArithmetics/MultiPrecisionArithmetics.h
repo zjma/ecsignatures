@@ -10,13 +10,63 @@
 #define MULTIPRECISIONARITHMETICS_API __declspec(dllimport)
 #endif
 
-// This class is exported from the MultiPrecisionArithmetics.dll
-class MULTIPRECISIONARITHMETICS_API CMultiPrecisionArithmetics {
-public:
-	CMultiPrecisionArithmetics(void);
-	// TODO: add your methods here.
-};
+#include<exception>
+#include<vector>
 
-extern MULTIPRECISIONARITHMETICS_API int nMultiPrecisionArithmetics;
 
-MULTIPRECISIONARITHMETICS_API int fnMultiPrecisionArithmetics(void);
+namespace MultiPrecisionArithmetics
+{
+    class MULTIPRECISIONARITHMETICS_API InvalidArgument : public std::exception {};
+    class MULTIPRECISIONARITHMETICS_API NegativeDifference : public std::exception {};
+
+
+    class MULTIPRECISIONARITHMETICS_API UBigNum {
+    private:
+        std::vector<uint32_t> val;
+    public:
+        ///<summary>Create a UBigNum whose value is 0.</summary>
+        UBigNum();
+
+        ///<summary>Create a UbigNum by copying the value from an old one.</summary>
+        UBigNum(const UBigNum &x);
+
+        ///<summary>Create a decimal representation without redundant leading 0.</summary>
+        std::string toDecString();
+
+        ///<summary>Create a hexadecimal representation without redundant leading 0.</summary>
+        std::string toHexString();
+
+        ///<summary>Create a UBigNum from a hexadecimal representation.</summary>
+        ///<remarks>Argument s is considered valid iff s is in {0,...,9,a,...,f}*.</remarks>
+        ///<exception cref="MultiPrecisionArithmetics::InvalidArgument">Thrown when s is not a valid hexadecimal representation.</exception>
+        static UBigNum fromHexString(const std::string &s);
+
+        ///<summary>Create a UBigNum from a decimal representation.</summary>
+        ///<remarks>Argument s is considered valid iff s is in {0,...,9}*.</remarks>
+        ///<exception cref="MultiPrecisionArithmetics::InvalidArgument">Thrown when s is not a valid decimal representation.</exception>
+        static UBigNum fromDecString(const std::string&);
+
+        ///<summary>Compare two UBigNums x and y.</summary>
+        ///<returns>-1 if x&lt;y, or 0 if x=y, or 1 if x&gt;y</returns>
+        static int cmp(const UBigNum &x, const UBigNum &y);
+        
+        UBigNum &operator=(const UBigNum &y);
+        bool operator==(const UBigNum &y) const;
+        bool operator!=(const UBigNum &y) const;
+        bool operator<=(const UBigNum &y) const;
+        bool operator<(const UBigNum &y) const;
+        bool operator>(const UBigNum &y) const;
+        bool operator>=(const UBigNum &y) const;
+        UBigNum& operator+=(const UBigNum &y);
+        UBigNum& operator-=(const UBigNum &y);
+        UBigNum& operator*=(const UBigNum &y);
+        const UBigNum operator+(const UBigNum &y) const;
+        const UBigNum operator-(const UBigNum &y) const;
+        const UBigNum operator*(const UBigNum &y) const;
+
+        ///<summary>Get smallest k such that this value is in [0,2^k-1].</summary>
+        int compactBitLen();
+
+
+    };
+}
