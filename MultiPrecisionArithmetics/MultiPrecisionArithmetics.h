@@ -31,10 +31,10 @@ namespace MultiPrecisionArithmetics
         UBigNum(const UBigNum &x);
 
         ///<summary>Create a decimal representation without redundant leading 0.</summary>
-        std::string toDecString();
+        std::string toDecString() const;
 
         ///<summary>Create a hexadecimal representation without redundant leading 0.</summary>
-        std::string toHexString();
+        std::string toHexString() const;
 
         ///<summary>Create a UBigNum from a hexadecimal representation.</summary>
         ///<remarks>Argument s is considered valid iff s is in {0,...,9,a,...,f}*.</remarks>
@@ -60,12 +60,15 @@ namespace MultiPrecisionArithmetics
         UBigNum& operator+=(const UBigNum &y);
         UBigNum& operator-=(const UBigNum &y);
         UBigNum& operator*=(const UBigNum &y);
+        UBigNum& operator+=(const uint32_t &y);
+        UBigNum& operator-=(const uint32_t &y);
+        UBigNum& operator*=(const uint32_t &y);
         const UBigNum operator+(const UBigNum &y) const;
         const UBigNum operator-(const UBigNum &y) const;
         const UBigNum operator*(const UBigNum &y) const;
 
         ///<summary>Get smallest k such that this value is in [0,2^k-1].</summary>
-        int compactBitLen();
+        int compactBitLen() const;
 
 
     };

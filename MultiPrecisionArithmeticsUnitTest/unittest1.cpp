@@ -17,50 +17,50 @@ namespace MultiPrecisionArithmeticsUnitTest
         TEST_METHOD(DefaultConstructAndStringify)
         {
             UBigNum x;
-            Assert::IsTrue(x.toDecString() == "0");
-            Assert::IsTrue(x.toHexString() == "0");
+            Assert::AreEqual("0", x.toDecString().c_str());
+            Assert::AreEqual("0", x.toHexString().c_str());
         }
         
         TEST_METHOD(CopyConstructAndStringify)
         {
             auto x = UBigNum::fromHexString("2001032120010a321b2001c03d21e20010321f");
             UBigNum y(x);
-            Assert::IsTrue(y.toDecString()=="713712023516710914164789719223790760356753951");
+            Assert::AreEqual("713712023516710914164789719223790760356753951", y.toDecString().c_str());
         }
 
         TEST_METHOD(DecConstructAndStringify)
         {
             auto x = UBigNum::fromDecString("456789456789456789456789");
-            Assert::IsTrue(x.toDecString() == "456789456789456789456789");
-            Assert::IsTrue(x.toHexString() == "60BA9B2777BEB1484795");
+            Assert::AreEqual("456789456789456789456789", x.toDecString().c_str());
+            Assert::AreEqual("60BA9B2777BEB1484795", x.toHexString().c_str());
         }
 
         TEST_METHOD(DecConstructAndStringify2)
         {
             auto x = UBigNum::fromDecString("0000000099999999999999999999");
-            Assert::IsTrue(x.toDecString() == "99999999999999999999");
-            Assert::IsTrue(x.toHexString() == "56BC75E2D630FFFFF");
+            Assert::AreEqual("99999999999999999999", x.toDecString().c_str());
+            Assert::AreEqual("56BC75E2D630FFFFF", x.toHexString().c_str());
         }
 
         TEST_METHOD(DecConstructAndStringify3)
         {
             auto x = UBigNum::fromDecString("");
-            Assert::IsTrue(x.toDecString() == "0");
-            Assert::IsTrue(x.toHexString() == "0");
+            Assert::AreEqual("0", x.toDecString().c_str());
+            Assert::AreEqual("0", x.toHexString().c_str());
         }
 
         TEST_METHOD(HexConstructAndStringify)
         {
             auto x = UBigNum::fromHexString("abcdef1234567890ABCDEF1234567890");
-            Assert::IsTrue(x.toDecString() == "228367257073420209420274865598769821840");
-            Assert::IsTrue(x.toHexString() == "ABCDEF1234567890ABCDEF1234567890");
+            Assert::AreEqual("228367257073420209420274865598769821840", x.toDecString().c_str());
+            Assert::AreEqual("ABCDEF1234567890ABCDEF1234567890", x.toHexString().c_str());
         }
 
         TEST_METHOD(HexConstructAndStringify2)
         {
             auto x = UBigNum::fromHexString("");
-            Assert::IsTrue(x.toDecString() == "0");
-            Assert::IsTrue(x.toHexString() == "0");
+            Assert::AreEqual("0", x.toDecString().c_str());
+            Assert::AreEqual("0", x.toHexString().c_str());
         }
 
         TEST_METHOD(InvalidDecConstruct)
@@ -92,7 +92,7 @@ namespace MultiPrecisionArithmeticsUnitTest
             auto x = UBigNum::fromHexString("fffffffffffffffffffffffffff");
             auto y = UBigNum::fromHexString("eeeeeee");
             x = y;
-            Assert::IsTrue(x.toDecString()=="eeeeeee");
+            Assert::AreEqual("EEEEEEE", x.toHexString().c_str());
         }
 
         TEST_METHOD(CompareEq)
@@ -197,24 +197,21 @@ namespace MultiPrecisionArithmeticsUnitTest
         {
             auto x = UBigNum::fromDecString("8888800000000000");
             auto y = UBigNum::fromDecString("0000099999999999");
-            auto z = UBigNum::fromDecString("8888899999999999");
-            Assert::IsTrue(x + y == z);
+            Assert::AreEqual("8888899999999999", (x + y).toDecString().c_str());
         }
 
         TEST_METHOD(OperatorAdd2)
         {
             auto x = UBigNum::fromHexString("d7c80e9c7bec0");
             auto y = UBigNum::fromHexString("0d5eae675d0ae5d05aeb");
-            auto z = UBigNum::fromHexString("D5EAE74D98BCF9819AB");
-            Assert::IsTrue(x + y == z);
+            Assert::AreEqual("D5EAE74D98BCF9819AB", (x + y).toHexString().c_str());
         }
 
         TEST_METHOD(OperatorAdd3)
         {
             auto x = UBigNum::fromHexString("d7c80e9c7bec0");
             auto y = UBigNum::fromHexString("");
-            auto z = UBigNum::fromHexString("d7c80e9c7bec0");
-            Assert::IsTrue(x + y == z);
+            Assert::AreEqual("D7C80E9C7BEC0", (x + y).toHexString().c_str());
         }
 
         TEST_METHOD(OperatorIncBy)
@@ -222,24 +219,29 @@ namespace MultiPrecisionArithmeticsUnitTest
             auto x = UBigNum::fromDecString("8888800000000000");
             auto y = UBigNum::fromDecString("0000099999999999");
             x += y;
-            auto z = UBigNum::fromDecString("8888899999999999");
-            Assert::IsTrue(x == z);
+            Assert::AreEqual("8888899999999999", x.toDecString().c_str());
+        }
+
+        TEST_METHOD(OperatorIncBySingle)
+        {
+            auto x = UBigNum::fromDecString("8888800000000000000000000");
+            uint32_t y = 0xffffffff;
+            x += y;
+            Assert::AreEqual("8888800000000004294967295", x.toDecString().c_str());
         }
 
         TEST_METHOD(OperatorSub)
         {
             auto x = UBigNum::fromDecString("1000000000000000000000");
             auto y = UBigNum::fromDecString("0000000000000123456789");
-            auto z = UBigNum::fromDecString("9999999999999876543211");
-            Assert::IsTrue(x - y == z);
+            Assert::AreEqual("999999999999876543211", (x - y).toDecString().c_str());
         }
 
         TEST_METHOD(OperatorSub2)
         {
-            auto x = UBigNum::fromHexString("1000000000000000000000");
-            auto y = UBigNum::fromHexString("0000000000000123456789");
-            auto z = UBigNum::fromHexString("9999999999999876543211");
-            Assert::IsTrue(x - y == z);
+            auto x = UBigNum::fromDecString("1000000000000000000000");
+            auto y = UBigNum::fromDecString("0000000000000123456789");
+            Assert::AreEqual("999999999999876543211", (x - y).toDecString().c_str());
         }
 
         TEST_METHOD(OperatorSub3)
@@ -247,7 +249,7 @@ namespace MultiPrecisionArithmeticsUnitTest
             auto x = UBigNum::fromHexString("1000000000000000000000");
             auto y = UBigNum::fromHexString("1000000000000000000000");
             auto z = UBigNum::fromHexString("");
-            Assert::IsTrue(x - y == z);
+            Assert::AreEqual("0", (x - y).toDecString().c_str());
         }
 
         TEST_METHOD(OperatorDecBy)
@@ -255,8 +257,15 @@ namespace MultiPrecisionArithmeticsUnitTest
             auto x = UBigNum::fromDecString("1000000000000000000000");
             auto y = UBigNum::fromDecString("0000000000000123456789");
             x -= y;
-            auto z = UBigNum::fromDecString("9999999999999876543211");
-            Assert::IsTrue(x == z);
+            Assert::AreEqual("999999999999876543211", x.toDecString().c_str());
+        }
+
+        TEST_METHOD(OperatorDecBySingle)
+        {
+            auto x = UBigNum::fromDecString("1000000000000000000000");
+            uint32_t y = 123456789;
+            x -= y;
+            Assert::AreEqual("999999999999876543211", x.toDecString().c_str());
         }
 
         TEST_METHOD(InvalidSub)
@@ -276,28 +285,36 @@ namespace MultiPrecisionArithmeticsUnitTest
             Assert::ExpectException<NegativeDifference>(f);
         }
 
+        TEST_METHOD(InvalidDecBySingle)
+        {
+            auto f = []() {
+                auto x = UBigNum::fromDecString("123");
+                uint32_t y = 456789;
+                x -= y;
+                return x;
+            };
+            Assert::ExpectException<NegativeDifference>(f);
+        }
+
         TEST_METHOD(OperatorMul)
         {
             auto x = UBigNum::fromHexString("d7c80e9c7bec0");
             auto y = UBigNum::fromHexString("0d5eae675d0ae5d05aeb");
-            auto z = UBigNum::fromHexString("B44F734699996AD4355D6FF38F6B9A40");
-            Assert::IsTrue(x * y == z);
+            Assert::AreEqual("B44F734699996AD4355D6FF38F6B9A40", (x*y).toHexString().c_str());
         }
 
         TEST_METHOD(OperatorMul2)
         {
             auto x = UBigNum::fromDecString("6666666666666666666666666666");
             auto y = UBigNum::fromDecString("55555555555555555555555555555");
-            auto z = UBigNum::fromDecString("370370370370370370370370370329629629629629629629629629630");
-            Assert::IsTrue(x * y == z);
+            Assert::AreEqual("370370370370370370370370370329629629629629629629629629630", (x*y).toDecString().c_str());
         }
 
         TEST_METHOD(OperatorMul3)
         {
             auto x = UBigNum::fromDecString("0");
             auto y = UBigNum::fromDecString("3333333333333333333333333333");
-            auto z = UBigNum::fromDecString("0");
-            Assert::IsTrue(x * y == z);
+            Assert::AreEqual("0", (x*y).toDecString().c_str());
         }
 
         TEST_METHOD(OperatorMulBy)
@@ -305,8 +322,15 @@ namespace MultiPrecisionArithmeticsUnitTest
             auto x = UBigNum::fromHexString("d7c80e9c7bec0");
             auto y = UBigNum::fromHexString("0d5eae675d0ae5d05aeb");
             x *= y;
-            auto z = UBigNum::fromHexString("B44F734699996AD4355D6FF38F6B9A40");
-            Assert::IsTrue(x == z);
+            Assert::AreEqual("B44F734699996AD4355D6FF38F6B9A40", x.toHexString().c_str());
+        }
+
+        TEST_METHOD(OperatorMulBySingle)
+        {
+            auto x = UBigNum::fromHexString("d7c80e9c7bec0");
+            uint32_t y = 55555;
+            x *= y;
+            Assert::AreEqual("210890547577794067520", x.toDecString().c_str());
         }
 
         TEST_METHOD(CompactBitLen)
@@ -344,7 +368,7 @@ namespace MultiPrecisionArithmeticsUnitTest
             auto y = UBigNum::fromHexString("1");
             x += y;
 
-            Assert::AreEqual(180, x.compactBitLen());
+            Assert::AreEqual(181, x.compactBitLen());
         }
 
         TEST_METHOD(CompactBitLen6)
@@ -352,7 +376,7 @@ namespace MultiPrecisionArithmeticsUnitTest
             auto x = UBigNum::fromHexString("fffffffffffffffffffffffffffffffffffffffffffff");
             auto y = UBigNum::fromHexString("1");
             x = y;
-            Assert::AreEqual(180, x.compactBitLen());
+            Assert::AreEqual(1, x.compactBitLen());
         }
     };
 }
