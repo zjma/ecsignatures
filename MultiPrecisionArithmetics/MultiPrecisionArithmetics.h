@@ -13,12 +13,14 @@
 #include<exception>
 #include<vector>
 
+typedef std::vector<uint8_t> Bytes;
+
 
 namespace MultiPrecisionArithmetics
 {
     class MULTIPRECISIONARITHMETICS_API InvalidArgument : public std::exception {};
     class MULTIPRECISIONARITHMETICS_API NegativeDifference : public std::exception {};
-
+    class MULTIPRECISIONARITHMETICS_API DivideByZero : public std::exception {};
 
     class MULTIPRECISIONARITHMETICS_API UBigNum {
     private:
@@ -26,6 +28,9 @@ namespace MultiPrecisionArithmetics
     public:
         ///<summary>Create a UBigNum whose value is 0.</summary>
         UBigNum();
+
+        ///<summary>Create a UBigNum from a little-endian byte array.</summary>
+        UBigNum(const Bytes &bytes);
 
         ///<summary>Create a UbigNum by copying the value from an old one.</summary>
         UBigNum(const UBigNum &x);
@@ -60,22 +65,31 @@ namespace MultiPrecisionArithmetics
         UBigNum& operator+=(const UBigNum &y);
         UBigNum& operator-=(const UBigNum &y);
         UBigNum& operator*=(const UBigNum &y);
+        UBigNum& operator%=(const UBigNum &y);
         UBigNum& operator+=(const uint32_t &y);
         UBigNum& operator-=(const uint32_t &y);
         UBigNum& operator*=(const uint32_t &y);
         const UBigNum operator+(const UBigNum &y) const;
         const UBigNum operator-(const UBigNum &y) const;
         const UBigNum operator*(const UBigNum &y) const;
+        const UBigNum operator%(const UBigNum &y) const;
 
         ///<summary>Get smallest k such that this value is in [0,2^k-1].</summary>
         int compactBitLen() const;
 
-
+        ///<summary>Create a little-endian byte array from current value.</summary>
+        ///<remarks>
+        ///The returned byte array is compact: no leading 0s will appear.
+        ///The returned array will be empty if the current value is 0.
+        ///</remarks>
+        Bytes toBytes();
     };
 }
 
 namespace GroupSecp256k1 {
-    class MULTIPRECISIONARITHMETICS_API FpNumber
+    const MULTIPRECISIONARITHMETICS_API MultiPrecisionArithmetics::UBigNum p;
+    const MULTIPRECISIONARITHMETICS_API MultiPrecisionArithmetics::UBigNum q;
+    class MULTIPRECISIONARITHMETICS_API FpNumber : public MultiPrecisionArithmetics::UBigNum
     {
     public:
         FpNumber &operator=(const FpNumber &y);
@@ -90,10 +104,13 @@ namespace GroupSecp256k1 {
         const FpNumber operator*(const FpNumber &y) const;
         const FpNumber operator/(const FpNumber &y) const;
     };
-    class MULTIPRECISIONARITHMETICS_API ZqNumber
+    class MULTIPRECISIONARITHMETICS_API ZqNumber : public MultiPrecisionArithmetics::UBigNum
     {
     public:
+        ZqNumber();
+        ZqNumber(const MultiPrecisionArithmetics::UBigNum &x);
         ZqNumber &operator=(const ZqNumber &y);
+        ZqNumber getInverse();
         bool operator==(const ZqNumber &y) const;
         bool operator!=(const ZqNumber &y) const;
         ZqNumber& operator+=(const ZqNumber &y);
@@ -105,10 +122,12 @@ namespace GroupSecp256k1 {
         const ZqNumber operator*(const ZqNumber &y) const;
         const ZqNumber operator/(const ZqNumber &y) const;
         static ZqNumber random();
+        static ZqNumber fromUBigNum(const UBigNum &x);
     };
     class MULTIPRECISIONARITHMETICS_API GroupElement
     {
     public:
+        FpNumber getAffineX();
         GroupElement &operator=(const GroupElement &Y);
         bool operator==(const GroupElement &Y) const;
         bool operator!=(const GroupElement &y) const;
@@ -116,9 +135,10 @@ namespace GroupSecp256k1 {
         GroupElement& operator-=(const GroupElement &Y);
         const GroupElement operator+(const GroupElement &Y) const;
         const GroupElement operator-(const GroupElement &Y) const;
-        const GroupElement operator*(const ZqNumber &x) const;
     };
-    FpNumber a;
-    FpNumber b;
-    GroupElement generator;
+    MULTIPRECISIONARITHMETICS_API const GroupElement operator*(const ZqNumber &a, const GroupElement &X);
+    MULTIPRECISIONARITHMETICS_API GroupElement simulProduct(const ZqNumber &a, const GroupElement &X, const ZqNumber &b, const GroupElement &Y);
+    MULTIPRECISIONARITHMETICS_API FpNumber a;
+    MULTIPRECISIONARITHMETICS_API FpNumber b;
+    MULTIPRECISIONARITHMETICS_API GroupElement generator;
 };

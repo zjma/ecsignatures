@@ -14,7 +14,6 @@
 #include "../MultiPrecisionArithmetics/MultiPrecisionArithmetics.h"
 using namespace MultiPrecisionArithmetics;
 
-typedef std::vector<uint8_t> ByteString;
 
 
 namespace ECDSA_secp256k1
@@ -31,25 +30,33 @@ namespace ECDSA_secp256k1
     };
     class ECSIGNATURES_API D1SignInterim {};
     class ECSIGNATURES_API D2SignInterim {};
-    class ECSIGNATURES_API D3SignInterim {};
-    class ECSIGNATURES_API D3VerifyInterim {};
+    class ECSIGNATURES_API D3SignInterim {
+    public:
+        GroupSecp256k1::ZqNumber rinv;
+        GroupSecp256k1::ZqNumber rinvdx;
+    };
+    class ECSIGNATURES_API D3VerifyInterim {
+    public:
+        GroupSecp256k1::ZqNumber d;
+        GroupSecp256k1::GroupElement ePdX;
+    };
 
     ECSIGNATURES_API std::pair<SKey, PKey> keyGen();
 
-    ECSIGNATURES_API ByteString D0Sign(const SKey &sk, const std::vector<uint8_t> &msg);
-    ECSIGNATURES_API bool D0Verify(const PKey &pk, const ByteString &msg, const ByteString &sig);
+    ECSIGNATURES_API Bytes D0Sign(const SKey &sk, const std::vector<uint8_t> &msg);
+    ECSIGNATURES_API bool D0Verify(const PKey &pk, const Bytes &msg, const Bytes &sig);
 
     ECSIGNATURES_API D1SignInterim D1SignOffline(const SKey &sk);
-    ECSIGNATURES_API ByteString D1SignOnline(const SKey &sk, const D1SignInterim &st, const ByteString &msg);
-    ECSIGNATURES_API bool D1Verify(const PKey &pk, const ByteString &msg, const ByteString &sig);
+    ECSIGNATURES_API Bytes D1SignOnline(const SKey &sk, const D1SignInterim &st, const Bytes &msg);
+    ECSIGNATURES_API bool D1Verify(const PKey &pk, const Bytes &msg, const Bytes &sig);
 
-    ECSIGNATURES_API std::pair<D2SignInterim, ByteString> D2SignOffline(const SKey &sk);
-    ECSIGNATURES_API ByteString D2SignOnline(const SKey &sk, const D2SignInterim &st, const ByteString &msg);
-    ECSIGNATURES_API bool D2Verify(const PKey &pk, const ByteString &msg, const ByteString &sig0, const ByteString &sig1);
+    ECSIGNATURES_API std::pair<D2SignInterim, Bytes> D2SignOffline(const SKey &sk);
+    ECSIGNATURES_API Bytes D2SignOnline(const SKey &sk, const D2SignInterim &st, const Bytes &msg);
+    ECSIGNATURES_API bool D2Verify(const PKey &pk, const Bytes &msg, const Bytes &sig0, const Bytes &sig1);
 
-    ECSIGNATURES_API std::pair<D3SignInterim, ByteString> D3SignOffline(const SKey &sk);
-    ECSIGNATURES_API ByteString D3SignOnline(const SKey &sk, const D3SignInterim &st, const ByteString &msg);
-    ECSIGNATURES_API D3VerifyInterim D3VerifyOffline(const PKey &pk, const ByteString &msg, const ByteString &sig0);
-    ECSIGNATURES_API bool D3VerifyOnline(const PKey &pk, const ByteString &sig1);
+    ECSIGNATURES_API std::pair<D3SignInterim, Bytes> D3SignOffline(const SKey &sk);
+    ECSIGNATURES_API Bytes D3SignOnline(const SKey &sk, const D3SignInterim &st, const Bytes &msg);
+    ECSIGNATURES_API D3VerifyInterim D3VerifyOffline(const PKey &pk, const Bytes &msg, const Bytes &sig0);
+    ECSIGNATURES_API bool D3VerifyOnline(const PKey &pk, const D3VerifyInterim &st, const Bytes &sig1);
 
 };

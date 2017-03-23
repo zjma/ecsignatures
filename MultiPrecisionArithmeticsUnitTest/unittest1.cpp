@@ -21,6 +21,20 @@ namespace MultiPrecisionArithmeticsUnitTest
             Assert::AreEqual("0", x.toHexString().c_str());
         }
         
+        TEST_METHOD(BytesConstructAndStringify)
+        {
+            Bytes bytes = { 1,2,3,4,5,6,7,8,9,0,0xab,0xcd,0xef,0xff,0xf,0xff,0xf,0,0,0 };
+            UBigNum x(bytes);
+            Assert::AreEqual("FFF0FFFEFCDAB00090807060504030201", x.toHexString().c_str());
+        }
+
+        TEST_METHOD(BytesConstructAndStringify2)
+        {
+            Bytes bytes;
+            UBigNum x(bytes);
+            Assert::AreEqual("0", x.toDecString().c_str());
+        }
+
         TEST_METHOD(CopyConstructAndStringify)
         {
             auto x = UBigNum::fromHexString("2001032120010a321b2001c03d21e20010321f");
@@ -333,6 +347,72 @@ namespace MultiPrecisionArithmeticsUnitTest
             Assert::AreEqual("210890547577794067520", x.toDecString().c_str());
         }
 
+        TEST_METHOD(OperatorMod)
+        {
+            auto x = UBigNum::fromHexString("0d5eae675d0ae5d05aeb");
+            auto y = UBigNum::fromHexString("d7c80e9c7bec0");
+            Assert::AreEqual("64641B046BCEB", (x%y).toHexString().c_str());
+        }
+
+        TEST_METHOD(OperatorMod2)
+        {
+            auto x = UBigNum::fromHexString("d7c80e9c7bec0");
+            auto y = UBigNum::fromHexString("0d5eae675d0ae5d05aeb");
+            Assert::AreEqual("D7C80E9C7BEC0", (x%y).toHexString().c_str());
+        }
+
+        TEST_METHOD(OperatorMod3)
+        {
+            auto x = UBigNum::fromDecString("370370370370370370370370370329629629629629629629629629630");
+            auto y = UBigNum::fromDecString("55555555555555555555555555555");
+            Assert::AreEqual("0", (x%y).toDecString().c_str());
+        }
+
+        TEST_METHOD(OperatorMod4)
+        {
+            auto x = UBigNum::fromDecString("0000000000000000000000000000000");
+            auto y = UBigNum::fromDecString("9999999999999999999999999999999");
+            Assert::AreEqual("0", (x%y).toDecString().c_str());
+        }
+
+
+        TEST_METHOD(OperatorModBy)
+        {
+            auto x = UBigNum::fromHexString("2222222222222222222222222222222222222222");
+            auto y = UBigNum::fromHexString("3333333333333333333333333");
+            x %= y;
+            Assert::AreEqual("2222222222444444444444444", x.toHexString().c_str());
+        }
+
+        TEST_METHOD(OperatorModBy2)
+        {
+            auto x = UBigNum::fromHexString("111111111111111111111111111111111111111111111111");
+            auto y = UBigNum::fromHexString("1");
+            x %= y;
+            Assert::AreEqual("0", x.toHexString().c_str());
+        }
+
+        TEST_METHOD(InvalidMod)
+        {
+            auto f = []() {
+                auto x = UBigNum::fromDecString("123123123123123123123");
+                UBigNum y;
+                return x%y;
+            };
+            Assert::ExpectException<DivideByZero>(f);
+        }
+
+        TEST_METHOD(InvalidModBy)
+        {
+            auto f = []() {
+                auto x = UBigNum::fromDecString("123123123123123123123");
+                UBigNum y;
+                x%=y;
+                return x;
+            };
+            Assert::ExpectException<DivideByZero>(f);
+        }
+
         TEST_METHOD(CompactBitLen)
         {
             auto x = UBigNum::fromHexString("45634565434563456543");
@@ -377,6 +457,25 @@ namespace MultiPrecisionArithmeticsUnitTest
             auto y = UBigNum::fromHexString("1");
             x = y;
             Assert::AreEqual(1, x.compactBitLen());
+        }
+
+        TEST_METHOD(ToBytes)
+        {
+            auto x = UBigNum::fromHexString("000000000000b532423b5652b11b11bbbbbba43");
+            auto xbytes = x.toBytes();
+            Bytes bytes = {0x43,0xba,0xbb,0xbb,0x1b,0xb1,0x11,0x2b,0x65,0xb5,0x23,0x24,0x53,0x0b};
+            Assert::AreEqual(bytes.size(), xbytes.size());
+            auto n = bytes.size();
+            for (int i = 0; i < n; ++i) {
+                Assert::AreEqual(bytes[i], xbytes[i]);
+            }
+        }
+
+        TEST_METHOD(ToBytes2)
+        {
+            UBigNum x;
+            auto xbytes = x.toBytes();
+            Assert::AreEqual(0, (int)xbytes.size());
         }
     };
 }

@@ -14,6 +14,19 @@ UBigNum::UBigNum(void)
 {
 }
 
+MultiPrecisionArithmetics::UBigNum::UBigNum(const Bytes & bytes)
+{
+    int o = bytes.size();
+    uint32_t acc = 0;
+    for (int i = 0; i < o; ++i) {
+        acc += bytes[i] << (8 * (i % 4));
+        if (i % 4 == 3 || i == o - 1) {
+            val.push_back(acc);
+            acc = 0;
+        }
+    }
+}
+
 MultiPrecisionArithmetics::UBigNum::UBigNum(const UBigNum & x)
 {
     val.assign(x.val.begin(), x.val.end());
@@ -240,6 +253,11 @@ UBigNum & MultiPrecisionArithmetics::UBigNum::operator*=(const UBigNum & y)
     return *this;
 }
 
+UBigNum & MultiPrecisionArithmetics::UBigNum::operator%=(const UBigNum & y)
+{
+    return *this;
+}
+
 UBigNum & MultiPrecisionArithmetics::UBigNum::operator+=(const uint32_t & y)
 {
     int vn = val.size();
@@ -352,6 +370,22 @@ const UBigNum MultiPrecisionArithmetics::UBigNum::operator*(const UBigNum & y) c
     return ans;
 }
 
+const UBigNum MultiPrecisionArithmetics::UBigNum::operator%(const UBigNum & y) const
+{
+    return UBigNum();
+}
+
+Bytes MultiPrecisionArithmetics::UBigNum::toBytes()
+{
+    int b = compactBitLen();
+    int o = (b + 7) / 8;
+    Bytes ans(o);
+    for (int i = 0; i < o; ++i) {
+        ans[i] = (val[i / 4] >> (8 * (i % 4))) & 0xff;
+    }
+    return ans;
+}
+
 
 using namespace GroupSecp256k1;
 
@@ -408,6 +442,20 @@ const FpNumber GroupSecp256k1::FpNumber::operator*(const FpNumber & y) const
 const FpNumber GroupSecp256k1::FpNumber::operator/(const FpNumber & y) const
 {
     return FpNumber();
+}
+
+GroupSecp256k1::ZqNumber::ZqNumber()
+{
+}
+
+GroupSecp256k1::ZqNumber::ZqNumber(const MultiPrecisionArithmetics::UBigNum & x)
+{
+    //TODO: x mod q
+}
+
+ZqNumber GroupSecp256k1::ZqNumber::getInverse()
+{
+    return ZqNumber();
 }
 
 ZqNumber & GroupSecp256k1::ZqNumber::operator=(const ZqNumber & y)
@@ -470,6 +518,11 @@ ZqNumber GroupSecp256k1::ZqNumber::random()
     return ZqNumber();
 }
 
+FpNumber GroupSecp256k1::GroupElement::getAffineX()
+{
+    return FpNumber();
+}
+
 GroupElement & GroupSecp256k1::GroupElement::operator=(const GroupElement & Y)
 {
     return *this;
@@ -505,7 +558,12 @@ const GroupElement GroupSecp256k1::GroupElement::operator-(const GroupElement & 
     return GroupElement();
 }
 
-const GroupElement GroupSecp256k1::GroupElement::operator*(const ZqNumber & x) const
+const GroupElement GroupSecp256k1::operator*(const ZqNumber & a, const GroupElement & X)
+{
+    return GroupElement();
+}
+
+GroupElement GroupSecp256k1::simulProduct(const ZqNumber & a, const GroupElement & X, const ZqNumber & b, const GroupElement & Y)
 {
     return GroupElement();
 }
