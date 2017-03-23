@@ -73,3 +73,52 @@ namespace MultiPrecisionArithmetics
 
     };
 }
+
+namespace GroupSecp256k1 {
+    class MULTIPRECISIONARITHMETICS_API FpNumber
+    {
+    public:
+        FpNumber &operator=(const FpNumber &y);
+        bool operator==(const FpNumber &y) const;
+        bool operator!=(const FpNumber &y) const;
+        FpNumber& operator+=(const FpNumber &y);
+        FpNumber& operator-=(const FpNumber &y);
+        FpNumber& operator*=(const FpNumber &y);
+        FpNumber& operator/=(const FpNumber &y);
+        const FpNumber operator+(const FpNumber &y) const;
+        const FpNumber operator-(const FpNumber &y) const;
+        const FpNumber operator*(const FpNumber &y) const;
+        const FpNumber operator/(const FpNumber &y) const;
+    };
+    class MULTIPRECISIONARITHMETICS_API ZqNumber
+    {
+    public:
+        ZqNumber &operator=(const ZqNumber &y);
+        bool operator==(const ZqNumber &y) const;
+        bool operator!=(const ZqNumber &y) const;
+        ZqNumber& operator+=(const ZqNumber &y);
+        ZqNumber& operator-=(const ZqNumber &y);
+        ZqNumber& operator*=(const ZqNumber &y);
+        ZqNumber& operator/=(const ZqNumber &y);
+        const ZqNumber operator+(const ZqNumber &y) const;
+        const ZqNumber operator-(const ZqNumber &y) const;
+        const ZqNumber operator*(const ZqNumber &y) const;
+        const ZqNumber operator/(const ZqNumber &y) const;
+        static ZqNumber random();
+    };
+    class MULTIPRECISIONARITHMETICS_API GroupElement
+    {
+    public:
+        GroupElement &operator=(const GroupElement &Y);
+        bool operator==(const GroupElement &Y) const;
+        bool operator!=(const GroupElement &y) const;
+        GroupElement& operator+=(const GroupElement &Y);
+        GroupElement& operator-=(const GroupElement &Y);
+        const GroupElement operator+(const GroupElement &Y) const;
+        const GroupElement operator-(const GroupElement &Y) const;
+        const GroupElement operator*(const ZqNumber &x) const;
+    };
+    FpNumber a;
+    FpNumber b;
+    GroupElement generator;
+};

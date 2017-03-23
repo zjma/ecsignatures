@@ -351,3 +351,161 @@ const UBigNum MultiPrecisionArithmetics::UBigNum::operator*(const UBigNum & y) c
     ans.val[xwn + ywn - 1] = c0;
     return ans;
 }
+
+
+using namespace GroupSecp256k1;
+
+FpNumber & GroupSecp256k1::FpNumber::operator=(const FpNumber & y)
+{
+    return *this;
+}
+
+bool GroupSecp256k1::FpNumber::operator==(const FpNumber & y) const
+{
+    return false;
+}
+
+bool GroupSecp256k1::FpNumber::operator!=(const FpNumber & y) const
+{
+    return false;
+}
+
+FpNumber & GroupSecp256k1::FpNumber::operator+=(const FpNumber & y)
+{
+    return *this;
+}
+
+FpNumber & GroupSecp256k1::FpNumber::operator-=(const FpNumber & y)
+{
+    return *this;
+}
+
+FpNumber & GroupSecp256k1::FpNumber::operator*=(const FpNumber & y)
+{
+    return *this;
+}
+
+FpNumber & GroupSecp256k1::FpNumber::operator/=(const FpNumber & y)
+{
+    return *this;
+}
+
+const FpNumber GroupSecp256k1::FpNumber::operator+(const FpNumber & y) const
+{
+    return FpNumber();
+}
+
+const FpNumber GroupSecp256k1::FpNumber::operator-(const FpNumber & y) const
+{
+    return FpNumber();
+}
+
+const FpNumber GroupSecp256k1::FpNumber::operator*(const FpNumber & y) const
+{
+    return FpNumber();
+}
+
+const FpNumber GroupSecp256k1::FpNumber::operator/(const FpNumber & y) const
+{
+    return FpNumber();
+}
+
+ZqNumber & GroupSecp256k1::ZqNumber::operator=(const ZqNumber & y)
+{
+    return *this;
+}
+
+bool GroupSecp256k1::ZqNumber::operator==(const ZqNumber & y) const
+{
+    return false;
+}
+
+bool GroupSecp256k1::ZqNumber::operator!=(const ZqNumber & y) const
+{
+    return false;
+}
+
+ZqNumber & GroupSecp256k1::ZqNumber::operator+=(const ZqNumber & y)
+{
+    return *this;
+}
+
+ZqNumber & GroupSecp256k1::ZqNumber::operator-=(const ZqNumber & y)
+{
+    return *this;
+}
+
+ZqNumber & GroupSecp256k1::ZqNumber::operator*=(const ZqNumber & y)
+{
+    return *this;
+}
+
+ZqNumber & GroupSecp256k1::ZqNumber::operator/=(const ZqNumber & y)
+{
+    return *this;
+}
+
+const ZqNumber GroupSecp256k1::ZqNumber::operator+(const ZqNumber & y) const
+{
+    return ZqNumber();
+}
+
+const ZqNumber GroupSecp256k1::ZqNumber::operator-(const ZqNumber & y) const
+{
+    return ZqNumber();
+}
+
+const ZqNumber GroupSecp256k1::ZqNumber::operator*(const ZqNumber & y) const
+{
+    return ZqNumber();
+}
+
+const ZqNumber GroupSecp256k1::ZqNumber::operator/(const ZqNumber & y) const
+{
+    return ZqNumber();
+}
+
+ZqNumber GroupSecp256k1::ZqNumber::random()
+{
+    return ZqNumber();
+}
+
+GroupElement & GroupSecp256k1::GroupElement::operator=(const GroupElement & Y)
+{
+    return *this;
+}
+
+bool GroupSecp256k1::GroupElement::operator==(const GroupElement & Y) const
+{
+    return false;
+}
+
+bool GroupSecp256k1::GroupElement::operator!=(const GroupElement & y) const
+{
+    return false;
+}
+
+GroupElement & GroupSecp256k1::GroupElement::operator+=(const GroupElement & Y)
+{
+    return *this;
+}
+
+GroupElement & GroupSecp256k1::GroupElement::operator-=(const GroupElement & Y)
+{
+    return *this;
+}
+
+const GroupElement GroupSecp256k1::GroupElement::operator+(const GroupElement & Y) const
+{
+    return GroupElement();
+}
+
+const GroupElement GroupSecp256k1::GroupElement::operator-(const GroupElement & Y) const
+{
+    return GroupElement();
+}
+
+const GroupElement GroupSecp256k1::GroupElement::operator*(const ZqNumber & x) const
+{
+    return GroupElement();
+}
