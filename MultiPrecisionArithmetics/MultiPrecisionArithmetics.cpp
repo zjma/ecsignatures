@@ -14,6 +14,11 @@ UBigNum::UBigNum(void)
 {
 }
 
+MultiPrecisionArithmetics::UBigNum::UBigNum(uint32_t x)
+{
+    val.push_back(x);
+}
+
 MultiPrecisionArithmetics::UBigNum::UBigNum(const Bytes & bytes)
 {
     int o = bytes.size();
@@ -213,91 +218,43 @@ bool MultiPrecisionArithmetics::UBigNum::operator>=(const UBigNum & y) const
 
 UBigNum & MultiPrecisionArithmetics::UBigNum::operator+=(const UBigNum & y)
 {
-    int vn = val.size();
-    int xwn = (compactBitLen() + 31) / 32;
-    int ywn = (y.compactBitLen() + 31) / 32;
-    int wn = (xwn > ywn) ? xwn : ywn;
-    val.resize(((vn > wn) ? vn : wn) + 1, 0);
-    uint64_t carry = 0;
-    for (int i = 0; i < wn; ++i) {
-        uint64_t yw = (i < ywn) ? y.val[i] : 0;
-        auto t = (uint64_t)val[i] + yw + carry;
-        val[i] = t & 0xffffffff;
-        carry = (t >> 32) & 0xffffffff;
-    }
-    if (carry > 0) val[wn] = carry;
+    *this = *this + y;
     return *this;
 }
 
 UBigNum & MultiPrecisionArithmetics::UBigNum::operator-=(const UBigNum & y)
 {
-    if (*this < y) throw NegativeDifference();
-    int xwn = (compactBitLen() + 31) / 32;
-    int ywn = (y.compactBitLen() + 31) / 32;
-    int wn = (xwn > ywn) ? xwn : ywn;
-    uint64_t borrowed = 0;
-    for (int i = 0; i < wn; ++i) {
-        uint64_t xw = val[i];
-        uint64_t yw = (i < ywn) ? y.val[i] : 0;
-        auto t = xw + 0x100000000 - yw - borrowed;
-        val[i] = t & 0xffffffff;
-        borrowed = 1 - ((t >> 32) & 0xffffffff);
-    }
+    *this = *this - y;
     return *this;
 }
 
 UBigNum & MultiPrecisionArithmetics::UBigNum::operator*=(const UBigNum & y)
 {
-    auto z = (*this)*y;
-    (*this) = z;
+    (*this) = (*this)*y;
+    return *this;
+}
+
+UBigNum & MultiPrecisionArithmetics::UBigNum::operator/=(const UBigNum & y)
+{
+    *this = *this / y;
     return *this;
 }
 
 UBigNum & MultiPrecisionArithmetics::UBigNum::operator%=(const UBigNum & y)
 {
+    *this = *this%y;
     return *this;
 }
 
-UBigNum & MultiPrecisionArithmetics::UBigNum::operator+=(const uint32_t & y)
+UBigNum & MultiPrecisionArithmetics::UBigNum::operator>>=(uint32_t y)
 {
-    int vn = val.size();
-    uint64_t carry = y;
-    for (int i = 0; i < vn&&carry>0; ++i) {
-        carry += val[i];
-        val[i] = carry & 0xffffffff;
-        carry = carry >> 32;
-    }
-    if (carry > 0) val.push_back(carry);
+    *this = *this >> y;
     return *this;
 }
 
-UBigNum & MultiPrecisionArithmetics::UBigNum::operator-=(const uint32_t & y)
+UBigNum & MultiPrecisionArithmetics::UBigNum::operator<<=(uint32_t y)
 {
-    int bn = compactBitLen();
-    uint64_t w0 = (bn == 0) ? 0 : val[0];
-    if (bn <= 32 && w0 < y) throw NegativeDifference();
-    int xwn = (bn + 31) / 32;
-    val[0] = (w0 + 0x100000000 - y) & 0xffffffff;
-    uint64_t borrowed = (w0 < y) ? 1 : 0;
-    for (int i = 1; i < xwn && borrowed>0; ++i) {
-        uint64_t xw = val[i];
-        auto t = xw + 0x100000000 - borrowed;
-        val[i] = t & 0xffffffff;
-        borrowed = 1 - ((t >> 32) & 0xffffffff);
-    }
-    return *this;
-}
-
-UBigNum & MultiPrecisionArithmetics::UBigNum::operator*=(const uint32_t & y)
-{
-    int vn = val.size();
-    uint64_t carry = 0;
-    for (int i = 0; i < vn; ++i) {
-        uint64_t t = (uint64_t)val[i] * y + carry;
-        val[i] = t & 0xffffffff;
-        carry = t >> 32;
-    }
-    if (carry > 0) val.push_back(carry);
+    *this = *this << y;
     return *this;
 }
 
@@ -370,9 +327,58 @@ const UBigNum MultiPrecisionArithmetics::UBigNum::operator*(const UBigNum & y) c
     return ans;
 }
 
+const UBigNum MultiPrecisionArithmetics::UBigNum::operator/(const UBigNum & y) const
+{
+    if (y == 0) throw DivideByZero();
+    UBigNum L = 0;
+    UBigNum R = *this + 1;
+    while (L + 1 < R) {
+        auto M = (L + R) >> 1;
+        if (M*y <= *this) L = M; else R = M;
+    }
+    return L;
+}
+
 const UBigNum MultiPrecisionArithmetics::UBigNum::operator%(const UBigNum & y) const
 {
-    return UBigNum();
+    return *this - (*this / y * y);
+}
+
+const UBigNum MultiPrecisionArithmetics::UBigNum::operator>>(uint32_t y) const
+{
+    int bitlen = compactBitLen();
+    int old_wordlen = (bitlen + 31) / 32;
+    auto target_bitlen = (std::max)(0, bitlen - (int)y);
+    auto target_wordlen = (target_bitlen + 31) / 32;
+    UBigNum ans;
+    ans.val.resize(target_wordlen, 0);
+    int delta_w = y / 32;
+    int delta_b = y % 32;
+    for (int i = 0; i < target_wordlen; ++i) {
+        auto word_low = (i + delta_w < old_wordlen) ? val[i + delta_w] : 0;
+        auto word_high = (i + delta_w + 1 < old_wordlen) ? val[i + delta_w + 1] : 0;
+        uint64_t dd = (uint64_t)word_low | (((uint64_t)word_high) << 32);
+        ans.val[i] = dd >> delta_b;
+    }
+    return ans;
+}
+
+const UBigNum MultiPrecisionArithmetics::UBigNum::operator<<(uint32_t y) const
+{
+    auto old_bitlen = compactBitLen();
+    auto target_bitlen = old_bitlen + y;
+    auto target_wordlen = (target_bitlen + 31) / 32;
+    int delta_w = y / 32;
+    int delta_b = y % 32;
+    UBigNum ans;
+    ans.val.resize(target_wordlen, 0);
+    for (int i = 0; i < target_wordlen; ++i) {
+        auto word_low = (i - delta_w - 1 >= 0) ? val[i - delta_w - 1] : 0;
+        auto word_high = (i - delta_w >= 0) ? val[i - delta_w] : 0;
+        uint64_t dd = (uint64_t)word_low | (((uint64_t)word_high) << 32);
+        ans.val[i] = (i < delta_w) ? 0 : (dd >> (32 - delta_b));
+    }
+    return ans;
 }
 
 Bytes MultiPrecisionArithmetics::UBigNum::toBytes()

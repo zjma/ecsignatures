@@ -21,6 +21,13 @@ namespace MultiPrecisionArithmeticsUnitTest
             Assert::AreEqual("0", x.toHexString().c_str());
         }
         
+        TEST_METHOD(SingleConstructAndStringify)
+        {
+            UBigNum x(666);
+            Assert::AreEqual("666", x.toDecString().c_str());
+            Assert::AreEqual("29A", x.toHexString().c_str());
+        }
+
         TEST_METHOD(BytesConstructAndStringify)
         {
             Bytes bytes = { 1,2,3,4,5,6,7,8,9,0,0xab,0xcd,0xef,0xff,0xf,0xff,0xf,0,0,0 };
@@ -236,14 +243,6 @@ namespace MultiPrecisionArithmeticsUnitTest
             Assert::AreEqual("8888899999999999", x.toDecString().c_str());
         }
 
-        TEST_METHOD(OperatorIncBySingle)
-        {
-            auto x = UBigNum::fromDecString("8888800000000000000000000");
-            uint32_t y = 0xffffffff;
-            x += y;
-            Assert::AreEqual("8888800000000004294967295", x.toDecString().c_str());
-        }
-
         TEST_METHOD(OperatorSub)
         {
             auto x = UBigNum::fromDecString("1000000000000000000000");
@@ -274,14 +273,6 @@ namespace MultiPrecisionArithmeticsUnitTest
             Assert::AreEqual("999999999999876543211", x.toDecString().c_str());
         }
 
-        TEST_METHOD(OperatorDecBySingle)
-        {
-            auto x = UBigNum::fromDecString("1000000000000000000000");
-            uint32_t y = 123456789;
-            x -= y;
-            Assert::AreEqual("999999999999876543211", x.toDecString().c_str());
-        }
-
         TEST_METHOD(InvalidSub)
         {
             auto f = []() {return UBigNum::fromDecString("12") - UBigNum::fromDecString("11111111111111111"); };
@@ -293,17 +284,6 @@ namespace MultiPrecisionArithmeticsUnitTest
             auto f = []() {
                 auto x = UBigNum::fromDecString("123");
                 auto y = UBigNum::fromDecString("456789");
-                x -= y;
-                return x;
-            };
-            Assert::ExpectException<NegativeDifference>(f);
-        }
-
-        TEST_METHOD(InvalidDecBySingle)
-        {
-            auto f = []() {
-                auto x = UBigNum::fromDecString("123");
-                uint32_t y = 456789;
                 x -= y;
                 return x;
             };
@@ -339,12 +319,63 @@ namespace MultiPrecisionArithmeticsUnitTest
             Assert::AreEqual("B44F734699996AD4355D6FF38F6B9A40", x.toHexString().c_str());
         }
 
-        TEST_METHOD(OperatorMulBySingle)
+        TEST_METHOD(OperatorDiv)
         {
-            auto x = UBigNum::fromHexString("d7c80e9c7bec0");
-            uint32_t y = 55555;
-            x *= y;
-            Assert::AreEqual("210890547577794067520", x.toDecString().c_str());
+            auto x = UBigNum::fromDecString("0987898798798798798787678745433454344");
+            auto y = UBigNum::fromDecString("0987898798798798798787678745433454343");
+            Assert::AreEqual("1", (x / y).toDecString().c_str());
+        }
+
+        TEST_METHOD(OperatorDiv2)
+        {
+            auto x = UBigNum::fromDecString("333333333333333333333333333333333333333333333333");
+            auto y = UBigNum::fromDecString("444444444444444444444444444444444444");
+            Assert::AreEqual("750000000000", (x / y).toDecString().c_str());
+        }
+
+        TEST_METHOD(OperatorDiv3)
+        {
+            auto x = UBigNum::fromDecString("0");
+            auto y = UBigNum::fromDecString("1");
+            Assert::AreEqual("0", (x / y).toDecString().c_str());
+        }
+
+        TEST_METHOD(OperatorDiv4)
+        {
+            auto x = UBigNum::fromDecString("10");
+            auto y = UBigNum::fromDecString("1");
+            Assert::AreEqual("10", (x / y).toDecString().c_str());
+        }
+
+        TEST_METHOD(OperatorDivBy)
+        {
+            auto x = UBigNum::fromDecString("333333333333333333333333333333333333333333333333");
+            auto y = UBigNum::fromDecString("444444444444444444444444444444444444");
+            x /= y;
+            Assert::AreEqual("750000000000", x.toDecString().c_str());
+        }
+
+        TEST_METHOD(InvalidDiv)
+        {
+            auto f = []() {
+                auto x = UBigNum::fromDecString("123123123123123123123");
+                UBigNum y;
+                return x / y;
+            };
+            Assert::ExpectException<DivideByZero>(f);
+
+        }
+
+        TEST_METHOD(InvalidDivBy)
+        {
+            auto f = []() {
+                auto x = UBigNum::fromDecString("123123123123123123123");
+                UBigNum y;
+                x /= y;
+                return x;
+            };
+            Assert::ExpectException<DivideByZero>(f);
+
         }
 
         TEST_METHOD(OperatorMod)
@@ -374,7 +405,6 @@ namespace MultiPrecisionArithmeticsUnitTest
             auto y = UBigNum::fromDecString("9999999999999999999999999999999");
             Assert::AreEqual("0", (x%y).toDecString().c_str());
         }
-
 
         TEST_METHOD(OperatorModBy)
         {
@@ -411,6 +441,52 @@ namespace MultiPrecisionArithmeticsUnitTest
                 return x;
             };
             Assert::ExpectException<DivideByZero>(f);
+        }
+
+        TEST_METHOD(OperatorShiftRight)
+        {
+            auto x = UBigNum::fromDecString("99999999999999999999999999999999999999999999");
+            Assert::AreEqual("86736173798840354720596224", (x>>60).toDecString().c_str());
+        }
+
+        TEST_METHOD(OperatorShiftRight2)
+        {
+            auto x = UBigNum::fromDecString("99999999999999999999999999999999999999999999");
+            Assert::AreEqual("0", (x >> 200).toDecString().c_str());
+        }
+
+        TEST_METHOD(OperatorShiftRight3)
+        {
+            auto x = UBigNum::fromDecString("86736173798840354720596224");
+            Assert::AreEqual("86736173798840354720596224", (x >> 0).toDecString().c_str());
+        }
+
+        TEST_METHOD(OperatorShiftRightBy)
+        {
+            auto x = UBigNum::fromDecString("99999999999999999999999999999999999999999999");
+            x >>= 60;
+            Assert::AreEqual("86736173798840354720596224", x.toDecString().c_str());
+        }
+
+        TEST_METHOD(OperatorShiftLeft)
+        {
+            auto x = UBigNum::fromDecString("100000000000000000000");
+            Assert::AreEqual("126765060022822940149670320537600000000000000000000", (x << 100).toDecString().c_str());
+        }
+
+        TEST_METHOD(OperatorShiftLeft2)
+        {
+            auto x = UBigNum::fromDecString("100000000000000000000");
+            Assert::AreEqual("100000000000000000000", (x << 0).toDecString().c_str());
+
+        }
+
+        TEST_METHOD(OperatorShiftLeftBy)
+        {
+            auto x = UBigNum::fromDecString("100000000000000000000");
+            x <<= 10;
+            Assert::AreEqual("102400000000000000000000", x.toDecString().c_str());
+
         }
 
         TEST_METHOD(CompactBitLen)

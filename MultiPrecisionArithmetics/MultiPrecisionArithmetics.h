@@ -29,6 +29,9 @@ namespace MultiPrecisionArithmetics
         ///<summary>Create a UBigNum whose value is 0.</summary>
         UBigNum();
 
+        ///<summary>Create a UBigNum from a single type data.</summary>
+        UBigNum(uint32_t x);
+
         ///<summary>Create a UBigNum from a little-endian byte array.</summary>
         UBigNum(const Bytes &bytes);
 
@@ -65,14 +68,17 @@ namespace MultiPrecisionArithmetics
         UBigNum& operator+=(const UBigNum &y);
         UBigNum& operator-=(const UBigNum &y);
         UBigNum& operator*=(const UBigNum &y);
+        UBigNum& operator/=(const UBigNum &y);
         UBigNum& operator%=(const UBigNum &y);
-        UBigNum& operator+=(const uint32_t &y);
-        UBigNum& operator-=(const uint32_t &y);
-        UBigNum& operator*=(const uint32_t &y);
+        UBigNum& operator>>=(uint32_t y);
+        UBigNum& operator<<=(uint32_t y);
         const UBigNum operator+(const UBigNum &y) const;
         const UBigNum operator-(const UBigNum &y) const;
         const UBigNum operator*(const UBigNum &y) const;
+        const UBigNum operator/(const UBigNum &y) const;
         const UBigNum operator%(const UBigNum &y) const;
+        const UBigNum operator>>(uint32_t y) const;
+        const UBigNum operator<<(uint32_t y) const;
 
         ///<summary>Get smallest k such that this value is in [0,2^k-1].</summary>
         int compactBitLen() const;
