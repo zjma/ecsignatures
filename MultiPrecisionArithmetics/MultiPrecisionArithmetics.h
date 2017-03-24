@@ -90,46 +90,39 @@ namespace MultiPrecisionArithmetics
         ///</remarks>
         Bytes toBytes();
     };
+    
+    class MULTIPRECISIONARITHMETICS_API P256FpNumber :public UBigNum {
+    public:
+        P256FpNumber();
+        P256FpNumber(const UBigNum &x);
+        const P256FpNumber operator+(const P256FpNumber &y) const;
+        const P256FpNumber operator-(const P256FpNumber &y) const;
+        const P256FpNumber operator*(const P256FpNumber &y) const;
+        P256FpNumber inverse() const;
+        static P256FpNumber pow(const P256FpNumber &b, const P256FpNumber &e);
+
+    };
+    
+
+    class MULTIPRECISIONARITHMETICS_API P256ZqNumber : public UBigNum {
+    public:
+        const static UBigNum q;
+        P256ZqNumber();
+        P256ZqNumber(const UBigNum &x);
+        const P256ZqNumber operator+(const P256ZqNumber &y) const;
+        const P256ZqNumber operator-(const P256ZqNumber &y) const;
+        const P256ZqNumber operator*(const P256ZqNumber &y) const;
+        P256ZqNumber inverse() const;
+        static P256ZqNumber pow(const P256ZqNumber &b, const P256ZqNumber &e);
+        static P256ZqNumber random();
+    };
 }
 
-namespace GroupSecp256k1 {
-    const MULTIPRECISIONARITHMETICS_API MultiPrecisionArithmetics::UBigNum p;
-    const MULTIPRECISIONARITHMETICS_API MultiPrecisionArithmetics::UBigNum q;
-    class MULTIPRECISIONARITHMETICS_API FpNumber : public MultiPrecisionArithmetics::UBigNum
-    {
-    public:
-        FpNumber &operator=(const FpNumber &y);
-        bool operator==(const FpNumber &y) const;
-        bool operator!=(const FpNumber &y) const;
-        FpNumber& operator+=(const FpNumber &y);
-        FpNumber& operator-=(const FpNumber &y);
-        FpNumber& operator*=(const FpNumber &y);
-        FpNumber& operator/=(const FpNumber &y);
-        const FpNumber operator+(const FpNumber &y) const;
-        const FpNumber operator-(const FpNumber &y) const;
-        const FpNumber operator*(const FpNumber &y) const;
-        const FpNumber operator/(const FpNumber &y) const;
-    };
-    class MULTIPRECISIONARITHMETICS_API ZqNumber : public MultiPrecisionArithmetics::UBigNum
-    {
-    public:
-        ZqNumber();
-        ZqNumber(const MultiPrecisionArithmetics::UBigNum &x);
-        ZqNumber &operator=(const ZqNumber &y);
-        ZqNumber getInverse();
-        bool operator==(const ZqNumber &y) const;
-        bool operator!=(const ZqNumber &y) const;
-        ZqNumber& operator+=(const ZqNumber &y);
-        ZqNumber& operator-=(const ZqNumber &y);
-        ZqNumber& operator*=(const ZqNumber &y);
-        ZqNumber& operator/=(const ZqNumber &y);
-        const ZqNumber operator+(const ZqNumber &y) const;
-        const ZqNumber operator-(const ZqNumber &y) const;
-        const ZqNumber operator*(const ZqNumber &y) const;
-        const ZqNumber operator/(const ZqNumber &y) const;
-        static ZqNumber random();
-        static ZqNumber fromUBigNum(const UBigNum &x);
-    };
+namespace GroupCurveP256 {
+    typedef MultiPrecisionArithmetics::P256FpNumber FpNumber;
+    typedef MultiPrecisionArithmetics::P256ZqNumber ZqNumber;
+    MULTIPRECISIONARITHMETICS_API FpNumber a;
+    MULTIPRECISIONARITHMETICS_API FpNumber b;
     class MULTIPRECISIONARITHMETICS_API GroupElement
     {
     public:
@@ -137,14 +130,10 @@ namespace GroupSecp256k1 {
         GroupElement &operator=(const GroupElement &Y);
         bool operator==(const GroupElement &Y) const;
         bool operator!=(const GroupElement &y) const;
-        GroupElement& operator+=(const GroupElement &Y);
-        GroupElement& operator-=(const GroupElement &Y);
         const GroupElement operator+(const GroupElement &Y) const;
         const GroupElement operator-(const GroupElement &Y) const;
     };
     MULTIPRECISIONARITHMETICS_API const GroupElement operator*(const ZqNumber &a, const GroupElement &X);
     MULTIPRECISIONARITHMETICS_API GroupElement simulProduct(const ZqNumber &a, const GroupElement &X, const ZqNumber &b, const GroupElement &Y);
-    MULTIPRECISIONARITHMETICS_API FpNumber a;
-    MULTIPRECISIONARITHMETICS_API FpNumber b;
     MULTIPRECISIONARITHMETICS_API GroupElement generator;
 };

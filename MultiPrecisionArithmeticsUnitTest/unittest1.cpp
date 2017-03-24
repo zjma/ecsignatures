@@ -554,4 +554,97 @@ namespace MultiPrecisionArithmeticsUnitTest
             Assert::AreEqual(0, (int)xbytes.size());
         }
     };
+
+    TEST_CLASS(P256ZqNumberTest) {
+    public:
+        TEST_METHOD(DefaultConstructAndStringify)
+        {
+            P256ZqNumber x;
+            Assert::AreEqual("0", x.toDecString().c_str());
+        }
+        TEST_METHOD(ModConstructAndStringify)
+        {
+            P256ZqNumber x(UBigNum::fromDecString("8888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888"));
+            Assert::AreEqual("152EC0BE1D6D374A7E6D9961FD4ADD98532DCE4FDBC4BC62128AAA34F73283D8", x.toDecString().c_str());
+        }
+        TEST_METHOD(ModConstructAndStringify2)
+        {
+            P256ZqNumber x(UBigNum::fromDecString("8888888888888888888888888888888888888888888888888888"));
+            Assert::AreEqual("8888888888888888888888888888888888888888888888888888", x.toDecString().c_str());
+        }
+        TEST_METHOD(ModConstructAndStringify3)
+        {
+            P256ZqNumber x(UBigNum::fromDecString("115792089210356248762697446949407573529996955224135760342422259061068512044369"));
+            Assert::AreEqual("0", x.toDecString().c_str());
+        }
+        TEST_METHOD(Add)
+        {
+            P256ZqNumber x(UBigNum::fromDecString("115792089210356248762697446949407573529996955224135760342422259061068512044368"));
+            P256ZqNumber y(UBigNum::fromDecString("115792089210356248762697446949407573529996955224135760342422259061068512044367"));
+            Assert::AreEqual("115792089210356248762697446949407573529996955224135760342422259061068512044366", (x + y).toDecString().c_str());
+        }
+        TEST_METHOD(Add2)
+        {
+            P256ZqNumber x(UBigNum::fromDecString("9"));
+            P256ZqNumber y(UBigNum::fromDecString("15"));
+            Assert::AreEqual("26", (x + y).toDecString().c_str());
+        }
+        TEST_METHOD(Sub)
+        {
+            P256ZqNumber x(UBigNum::fromDecString("115792089210356248762697446949407573529996955224135760342422259061068512044368"));
+            P256ZqNumber y(UBigNum::fromDecString("115792089210356248762697446949407573529996955224135760342422259061068512044367"));
+            Assert::AreEqual("1", (x - y).toDecString().c_str());
+        }
+        TEST_METHOD(Sub2)
+        {
+            P256ZqNumber x(UBigNum::fromDecString("115792089210356248762697446949407573529996955224135760342422259061068512044367"));
+            P256ZqNumber y(UBigNum::fromDecString("115792089210356248762697446949407573529996955224135760342422259061068512044368"));
+            Assert::AreEqual("115792089210356248762697446949407573529996955224135760342422259061068512044368", (x - y).toDecString().c_str());
+        }
+        TEST_METHOD(Mul)
+        {
+            P256ZqNumber x(UBigNum::fromDecString("333333333333333333333333333333333333333333333333333333333333"));
+            P256ZqNumber y(UBigNum::fromDecString("4444444444444444444444444444444444444444444444444444444"));
+            Assert::AreEqual("90994184074089617355432738025097597368753842921875971443842063554856425665873", (x * y).toDecString().c_str());
+        }
+        TEST_METHOD(Mul2)
+        {
+            P256ZqNumber x(UBigNum::fromDecString("2"));
+            P256ZqNumber y(UBigNum::fromDecString("33333333333333333333333"));
+            Assert::AreEqual("66666666666666666666666", (x * y).toDecString().c_str());
+        }
+        TEST_METHOD(Inverse)
+        {
+            P256ZqNumber x(UBigNum::fromDecString("33333333333333333333333333333333333333333333333"));
+            Assert::AreEqual("8907997423900091677643589948669673022704806214912975799323871470741453805152", x.inverse().toDecString().c_str());
+        }
+        TEST_METHOD(Inverse2)
+        {
+            P256ZqNumber x(UBigNum::fromDecString("115792089210356248762697446949407573529996955224135760342422259061068512044368"));
+            Assert::AreEqual("115792089210356248762697446949407573529996955224135760342422259061068512044368", x.inverse().toDecString().c_str());
+        }
+        TEST_METHOD(InvalidInverse)
+        {
+            auto f = []() {P256ZqNumber x; return x.inverse(); };
+            Assert::ExpectException<DivideByZero>(f);
+        }
+        TEST_METHOD(Power)
+        {
+            P256ZqNumber x(UBigNum::fromDecString("33333333333333333333333333333333333333333333333"));
+            UBigNum a = 2222;
+            Assert::AreEqual("104001243758660214686274006907352015357507299339100700464468384283042628328533", P256ZqNumber::pow(x, a).toDecString().c_str());
+        }
+        TEST_METHOD(Power2)
+        {
+            P256ZqNumber x(UBigNum::fromDecString("2222222222222222222222222"));
+            auto a = UBigNum::fromDecString("115792089210356248762697446949407573529996955224135760342422259061068512044368");
+            Assert::AreEqual("1", P256ZqNumber::pow(x, a).toDecString().c_str());
+        }
+        TEST_METHOD(Power3)
+        {
+            P256ZqNumber x(UBigNum::fromDecString("1111111"));
+            UBigNum a;
+            Assert::AreEqual("1111111", P256ZqNumber::pow(x, a).toDecString().c_str());
+        }
+    };
 }

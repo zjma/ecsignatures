@@ -393,183 +393,117 @@ Bytes MultiPrecisionArithmetics::UBigNum::toBytes()
 }
 
 
-using namespace GroupSecp256k1;
+using namespace GroupCurveP256;
 
-FpNumber & GroupSecp256k1::FpNumber::operator=(const FpNumber & y)
-{
-    return *this;
-}
-
-bool GroupSecp256k1::FpNumber::operator==(const FpNumber & y) const
-{
-    return false;
-}
-
-bool GroupSecp256k1::FpNumber::operator!=(const FpNumber & y) const
-{
-    return false;
-}
-
-FpNumber & GroupSecp256k1::FpNumber::operator+=(const FpNumber & y)
-{
-    return *this;
-}
-
-FpNumber & GroupSecp256k1::FpNumber::operator-=(const FpNumber & y)
-{
-    return *this;
-}
-
-FpNumber & GroupSecp256k1::FpNumber::operator*=(const FpNumber & y)
-{
-    return *this;
-}
-
-FpNumber & GroupSecp256k1::FpNumber::operator/=(const FpNumber & y)
-{
-    return *this;
-}
-
-const FpNumber GroupSecp256k1::FpNumber::operator+(const FpNumber & y) const
+const FpNumber GroupCurveP256::FpNumber::operator+(const FpNumber & y) const
 {
     return FpNumber();
 }
 
-const FpNumber GroupSecp256k1::FpNumber::operator-(const FpNumber & y) const
+const FpNumber GroupCurveP256::FpNumber::operator-(const FpNumber & y) const
 {
     return FpNumber();
 }
 
-const FpNumber GroupSecp256k1::FpNumber::operator*(const FpNumber & y) const
+const FpNumber GroupCurveP256::FpNumber::operator*(const FpNumber & y) const
 {
     return FpNumber();
 }
 
-const FpNumber GroupSecp256k1::FpNumber::operator/(const FpNumber & y) const
+FpNumber GroupCurveP256::GroupElement::getAffineX()
 {
     return FpNumber();
 }
 
-GroupSecp256k1::ZqNumber::ZqNumber()
-{
-}
-
-GroupSecp256k1::ZqNumber::ZqNumber(const MultiPrecisionArithmetics::UBigNum & x)
-{
-    //TODO: x mod q
-}
-
-ZqNumber GroupSecp256k1::ZqNumber::getInverse()
-{
-    return ZqNumber();
-}
-
-ZqNumber & GroupSecp256k1::ZqNumber::operator=(const ZqNumber & y)
+GroupElement & GroupCurveP256::GroupElement::operator=(const GroupElement & Y)
 {
     return *this;
 }
 
-bool GroupSecp256k1::ZqNumber::operator==(const ZqNumber & y) const
+bool GroupCurveP256::GroupElement::operator==(const GroupElement & Y) const
 {
     return false;
 }
 
-bool GroupSecp256k1::ZqNumber::operator!=(const ZqNumber & y) const
+bool GroupCurveP256::GroupElement::operator!=(const GroupElement & y) const
 {
     return false;
 }
 
-ZqNumber & GroupSecp256k1::ZqNumber::operator+=(const ZqNumber & y)
-{
-    return *this;
-}
-
-ZqNumber & GroupSecp256k1::ZqNumber::operator-=(const ZqNumber & y)
-{
-    return *this;
-}
-
-ZqNumber & GroupSecp256k1::ZqNumber::operator*=(const ZqNumber & y)
-{
-    return *this;
-}
-
-ZqNumber & GroupSecp256k1::ZqNumber::operator/=(const ZqNumber & y)
-{
-    return *this;
-}
-
-const ZqNumber GroupSecp256k1::ZqNumber::operator+(const ZqNumber & y) const
-{
-    return ZqNumber();
-}
-
-const ZqNumber GroupSecp256k1::ZqNumber::operator-(const ZqNumber & y) const
-{
-    return ZqNumber();
-}
-
-const ZqNumber GroupSecp256k1::ZqNumber::operator*(const ZqNumber & y) const
-{
-    return ZqNumber();
-}
-
-const ZqNumber GroupSecp256k1::ZqNumber::operator/(const ZqNumber & y) const
-{
-    return ZqNumber();
-}
-
-ZqNumber GroupSecp256k1::ZqNumber::random()
-{
-    return ZqNumber();
-}
-
-FpNumber GroupSecp256k1::GroupElement::getAffineX()
-{
-    return FpNumber();
-}
-
-GroupElement & GroupSecp256k1::GroupElement::operator=(const GroupElement & Y)
-{
-    return *this;
-}
-
-bool GroupSecp256k1::GroupElement::operator==(const GroupElement & Y) const
-{
-    return false;
-}
-
-bool GroupSecp256k1::GroupElement::operator!=(const GroupElement & y) const
-{
-    return false;
-}
-
-GroupElement & GroupSecp256k1::GroupElement::operator+=(const GroupElement & Y)
-{
-    return *this;
-}
-
-GroupElement & GroupSecp256k1::GroupElement::operator-=(const GroupElement & Y)
-{
-    return *this;
-}
-
-const GroupElement GroupSecp256k1::GroupElement::operator+(const GroupElement & Y) const
+const GroupElement GroupCurveP256::GroupElement::operator+(const GroupElement & Y) const
 {
     return GroupElement();
 }
 
-const GroupElement GroupSecp256k1::GroupElement::operator-(const GroupElement & Y) const
+const GroupElement GroupCurveP256::GroupElement::operator-(const GroupElement & Y) const
 {
     return GroupElement();
 }
 
-const GroupElement GroupSecp256k1::operator*(const ZqNumber & a, const GroupElement & X)
+const GroupElement GroupCurveP256::operator*(const ZqNumber & a, const GroupElement & X)
 {
     return GroupElement();
 }
 
-GroupElement GroupSecp256k1::simulProduct(const ZqNumber & a, const GroupElement & X, const ZqNumber & b, const GroupElement & Y)
+GroupElement GroupCurveP256::simulProduct(const ZqNumber & a, const GroupElement & X, const ZqNumber & b, const GroupElement & Y)
 {
     return GroupElement();
+}
+
+MultiPrecisionArithmetics::P256FpNumber::P256FpNumber()
+{
+}
+
+MultiPrecisionArithmetics::P256FpNumber::P256FpNumber(const UBigNum & x)
+{
+}
+
+P256FpNumber MultiPrecisionArithmetics::P256FpNumber::inverse() const
+{
+    return P256FpNumber();
+}
+
+P256FpNumber MultiPrecisionArithmetics::P256FpNumber::pow(const P256FpNumber & b, const P256FpNumber & e)
+{
+    return P256FpNumber();
+}
+
+const UBigNum P256ZqNumber::q = UBigNum::fromDecString("115792089210356248762697446949407573529996955224135760342422259061068512044369");
+
+MultiPrecisionArithmetics::P256ZqNumber::P256ZqNumber()
+{
+}
+
+MultiPrecisionArithmetics::P256ZqNumber::P256ZqNumber(const UBigNum & x)
+{
+}
+
+const P256ZqNumber MultiPrecisionArithmetics::P256ZqNumber::operator+(const P256ZqNumber & y) const
+{
+    return P256ZqNumber();
+}
+
+const P256ZqNumber MultiPrecisionArithmetics::P256ZqNumber::operator-(const P256ZqNumber & y) const
+{
+    return P256ZqNumber();
+}
+
+const P256ZqNumber MultiPrecisionArithmetics::P256ZqNumber::operator*(const P256ZqNumber & y) const
+{
+    return P256ZqNumber();
+}
+
+P256ZqNumber MultiPrecisionArithmetics::P256ZqNumber::inverse() const
+{
+    return P256ZqNumber();
+}
+
+P256ZqNumber MultiPrecisionArithmetics::P256ZqNumber::pow(const P256ZqNumber & b, const P256ZqNumber & e)
+{
+    return P256ZqNumber();
+}
+
+P256ZqNumber MultiPrecisionArithmetics::P256ZqNumber::random()
+{
+    return P256ZqNumber();
 }

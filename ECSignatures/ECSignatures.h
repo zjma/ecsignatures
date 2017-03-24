@@ -16,29 +16,29 @@ using namespace MultiPrecisionArithmetics;
 
 
 
-namespace ECDSA_secp256k1
+namespace ECDSA_P256
 {
     class ECSIGNATURES_API SKey {
     public:
-        GroupSecp256k1::ZqNumber x;
-        SKey(const GroupSecp256k1::ZqNumber &x);
+        GroupCurveP256::ZqNumber x;
+        SKey(const GroupCurveP256::ZqNumber &x);
     };
     class ECSIGNATURES_API PKey {
     public:
-        GroupSecp256k1::GroupElement Y;
-        PKey(const GroupSecp256k1::GroupElement &Y);
+        GroupCurveP256::GroupElement Y;
+        PKey(const GroupCurveP256::GroupElement &Y);
     };
     class ECSIGNATURES_API D1SignInterim {};
     class ECSIGNATURES_API D2SignInterim {};
     class ECSIGNATURES_API D3SignInterim {
     public:
-        GroupSecp256k1::ZqNumber rinv;
-        GroupSecp256k1::ZqNumber rinvdx;
+        GroupCurveP256::ZqNumber rinv;
+        GroupCurveP256::ZqNumber rinvdx;
     };
     class ECSIGNATURES_API D3VerifyInterim {
     public:
-        GroupSecp256k1::ZqNumber d;
-        GroupSecp256k1::GroupElement ePdX;
+        GroupCurveP256::ZqNumber d;
+        GroupCurveP256::GroupElement ePdX;
     };
 
     ECSIGNATURES_API std::pair<SKey, PKey> keyGen();
