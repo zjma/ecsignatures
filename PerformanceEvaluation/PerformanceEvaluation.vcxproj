@@ -91,6 +91,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
+      <Profile>true</Profile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -102,6 +103,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
+      <Profile>true</Profile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -153,6 +155,12 @@
   <ItemGroup>
     <ProjectReference Include="..\ECSignatures\ECSignatures.vcxproj">
       <Project>{14a0e8f8-8629-43d8-974c-c419923974a9}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\HashLibrary\HashLibrary.vcxproj">
+      <Project>{bca113a2-b817-467c-909a-9071946363fa}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\MultiPrecisionArithmetics\MultiPrecisionArithmetics.vcxproj">
+      <Project>{94fb7715-a00b-4c00-a0c5-44a13ec8190c}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
