@@ -14,4 +14,4 @@
 #include<vector>
 typedef std::vector<uint8_t> Bytes;
 
-HASHLIBRARY_API Bytes DummyHash(const Bytes &msg);
+HASHLIBRARY_API Bytes vhash(const Bytes &msg, int target_bytelen);

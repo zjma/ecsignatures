@@ -5,7 +5,7 @@
 #include "HashLibrary.h"
 
 
-Bytes DummyHash(const Bytes & msg)
+HASHLIBRARY_API Bytes vhash(const Bytes & msg, int target_bytelen)
 {
     return Bytes();
 }

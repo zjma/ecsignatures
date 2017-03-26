@@ -16,124 +16,203 @@
 typedef std::vector<uint8_t> Bytes;
 
 
-namespace MultiPrecisionArithmetics
-{
-    class MULTIPRECISIONARITHMETICS_API InvalidArgument : public std::exception {};
-    class MULTIPRECISIONARITHMETICS_API NegativeDifference : public std::exception {};
-    class MULTIPRECISIONARITHMETICS_API DivideByZero : public std::exception {};
 
-    class MULTIPRECISIONARITHMETICS_API UBigNum {
-    private:
-        std::vector<uint32_t> val;
-    public:
-        ///<summary>Create a UBigNum whose value is 0.</summary>
-        UBigNum();
+class MULTIPRECISIONARITHMETICS_API InvalidArgument : public std::exception {};
+class MULTIPRECISIONARITHMETICS_API NegativeDifference : public std::exception {};
+class MULTIPRECISIONARITHMETICS_API DivideByZero : public std::exception {};
 
-        ///<summary>Create a UBigNum from a single type data.</summary>
-        UBigNum(uint32_t x);
+class MULTIPRECISIONARITHMETICS_API UBigNum {
+protected:
+public:
+    std::vector<uint32_t> val;
+    ///<summary>Create a UBigNum whose value is 0.</summary>
+    UBigNum();
 
-        ///<summary>Create a UBigNum from a little-endian byte array.</summary>
-        UBigNum(const Bytes &bytes);
+    ///<summary>Create a UBigNum from a single type data.</summary>
+    UBigNum(uint32_t x);
 
-        ///<summary>Create a UbigNum by copying the value from an old one.</summary>
-        UBigNum(const UBigNum &x);
+    ///<summary>Create a UBigNum from a little-endian byte array.</summary>
+    UBigNum(const Bytes &bytes);
 
-        ///<summary>Create a decimal representation without redundant leading 0.</summary>
-        std::string toDecString() const;
+    ///<summary>Create a UbigNum by copying the value from an old one.</summary>
+    UBigNum(const UBigNum &x);
 
-        ///<summary>Create a hexadecimal representation without redundant leading 0.</summary>
-        std::string toHexString() const;
+    ///<summary>Create a decimal representation without redundant leading 0.</summary>
+    std::string toDecString() const;
 
-        ///<summary>Create a UBigNum from a hexadecimal representation.</summary>
-        ///<remarks>Argument s is considered valid iff s is in {0,...,9,a,...,f}*.</remarks>
-        ///<exception cref="MultiPrecisionArithmetics::InvalidArgument">Thrown when s is not a valid hexadecimal representation.</exception>
-        static UBigNum fromHexString(const std::string &s);
+    ///<summary>Create a hexadecimal representation without redundant leading 0.</summary>
+    std::string toHexString() const;
 
-        ///<summary>Create a UBigNum from a decimal representation.</summary>
-        ///<remarks>Argument s is considered valid iff s is in {0,...,9}*.</remarks>
-        ///<exception cref="MultiPrecisionArithmetics::InvalidArgument">Thrown when s is not a valid decimal representation.</exception>
-        static UBigNum fromDecString(const std::string&);
+    ///<summary>Create a UBigNum from a hexadecimal representation.</summary>
+    ///<remarks>Argument s is considered valid iff s is in {0,...,9,a,...,f}*.</remarks>
+    ///<exception cref="MultiPrecisionArithmetics::InvalidArgument">Thrown when s is not a valid hexadecimal representation.</exception>
+    static UBigNum fromHexString(const std::string &s);
 
-        ///<summary>Compare two UBigNums x and y.</summary>
-        ///<returns>-1 if x&lt;y, or 0 if x=y, or 1 if x&gt;y</returns>
-        static int cmp(const UBigNum &x, const UBigNum &y);
+    ///<summary>Create a UBigNum from a decimal representation.</summary>
+    ///<remarks>Argument s is considered valid iff s is in {0,...,9}*.</remarks>
+    ///<exception cref="MultiPrecisionArithmetics::InvalidArgument">Thrown when s is not a valid decimal representation.</exception>
+    static UBigNum fromDecString(const std::string&);
+
+    ///<summary>Compare two UBigNums x and y.</summary>
+    ///<returns>-1 if x&lt;y, or 0 if x=y, or 1 if x&gt;y</returns>
+    static int cmp(const UBigNum &x, const UBigNum &y);
         
-        UBigNum &operator=(const UBigNum &y);
-        bool operator==(const UBigNum &y) const;
-        bool operator!=(const UBigNum &y) const;
-        bool operator<=(const UBigNum &y) const;
-        bool operator<(const UBigNum &y) const;
-        bool operator>(const UBigNum &y) const;
-        bool operator>=(const UBigNum &y) const;
-        UBigNum& operator+=(const UBigNum &y);
-        UBigNum& operator-=(const UBigNum &y);
-        UBigNum& operator*=(const UBigNum &y);
-        UBigNum& operator/=(const UBigNum &y);
-        UBigNum& operator%=(const UBigNum &y);
-        UBigNum& operator>>=(uint32_t y);
-        UBigNum& operator<<=(uint32_t y);
-        const UBigNum operator+(const UBigNum &y) const;
-        const UBigNum operator-(const UBigNum &y) const;
-        const UBigNum operator*(const UBigNum &y) const;
-        const UBigNum operator/(const UBigNum &y) const;
-        const UBigNum operator%(const UBigNum &y) const;
-        const UBigNum operator>>(uint32_t y) const;
-        const UBigNum operator<<(uint32_t y) const;
+    UBigNum &operator=(const UBigNum &y);
+    bool operator==(const UBigNum &y) const;
+    bool operator!=(const UBigNum &y) const;
+    bool operator<=(const UBigNum &y) const;
+    bool operator<(const UBigNum &y) const;
+    bool operator>(const UBigNum &y) const;
+    bool operator>=(const UBigNum &y) const;
+    UBigNum& operator+=(const UBigNum &y);
+    UBigNum& operator-=(const UBigNum &y);
+    UBigNum& operator*=(const UBigNum &y);
+    UBigNum& operator/=(const UBigNum &y);
+    UBigNum& operator%=(const UBigNum &y);
+    UBigNum& operator>>=(uint32_t y);
+    UBigNum& operator<<=(uint32_t y);
+    const UBigNum operator+(const UBigNum &y) const;
+    const UBigNum operator-(const UBigNum &y) const;
+    const UBigNum operator*(const UBigNum &y) const;
+    const UBigNum operator/(const UBigNum &y) const;
+    const UBigNum operator%(const UBigNum &y) const;
+    const UBigNum operator>>(uint32_t y) const;
+    const UBigNum operator<<(uint32_t y) const;
 
-        ///<summary>Get smallest k such that this value is in [0,2^k-1].</summary>
-        int compactBitLen() const;
+    ///<summary>Get smallest k such that this value is in [0,2^k-1].</summary>
+    int compactBitLen() const;
 
-        ///<summary>Create a little-endian byte array from current value.</summary>
-        ///<remarks>
-        ///The returned byte array is compact: no leading 0s will appear.
-        ///The returned array will be empty if the current value is 0.
-        ///</remarks>
-        Bytes toBytes();
-    };
-    
-    class MULTIPRECISIONARITHMETICS_API P256FpNumber :public UBigNum {
-    public:
-        P256FpNumber();
-        P256FpNumber(const UBigNum &x);
-        const P256FpNumber operator+(const P256FpNumber &y) const;
-        const P256FpNumber operator-(const P256FpNumber &y) const;
-        const P256FpNumber operator*(const P256FpNumber &y) const;
-        P256FpNumber inverse() const;
-        static P256FpNumber pow(const P256FpNumber &b, const P256FpNumber &e);
+    ///<summary>Create a little-endian byte array from current value.</summary>
+    ///<remarks>
+    ///The returned byte array is compact: no leading 0s will appear.
+    ///The returned array will be empty if the current value is 0.
+    ///</remarks>
+    Bytes toBytes();
+};
 
-    };
-    
+extern MULTIPRECISIONARITHMETICS_API UBigNum ConstModulus[2];
 
-    class MULTIPRECISIONARITHMETICS_API P256ZqNumber : public UBigNum {
-    public:
-        const static UBigNum q;
-        P256ZqNumber();
-        P256ZqNumber(const UBigNum &x);
-        const P256ZqNumber operator+(const P256ZqNumber &y) const;
-        const P256ZqNumber operator-(const P256ZqNumber &y) const;
-        const P256ZqNumber operator*(const P256ZqNumber &y) const;
-        P256ZqNumber inverse() const;
-        static P256ZqNumber pow(const P256ZqNumber &b, const P256ZqNumber &e);
-        static P256ZqNumber random();
-    };
-}
 
-namespace GroupCurveP256 {
-    typedef MultiPrecisionArithmetics::P256FpNumber FpNumber;
-    typedef MultiPrecisionArithmetics::P256ZqNumber ZqNumber;
-    MULTIPRECISIONARITHMETICS_API FpNumber a;
-    MULTIPRECISIONARITHMETICS_API FpNumber b;
-    class MULTIPRECISIONARITHMETICS_API GroupElement
+template <int mid>
+class ModNumber : public UBigNum {
+public:
+    static const UBigNum Modulus;
+    static const int ByteLen;
+    ModNumber() {
+        val.resize(ByteLen);
+    }
+    ModNumber(const UBigNum &x) {
+        val.resize(ByteLen);
+        auto r = x%Modulus;
+        val.assign(r.val.begin(), r.val.end());
+    }
+    static ModNumber fromBytes(const Bytes &bytes) {
+        return ModNumber();
+    }
+    Bytes toBytes() const {
+        return Bytes();
+    }
+    const ModNumber operator+(const ModNumber &y) const {
+        return ModNumber();
+    }
+    const ModNumber operator-(const ModNumber &y) const {
+        return ModNumber();
+    }
+    const ModNumber operator*(const ModNumber &y) const {
+        return ModNumber();
+    }
+    ModNumber inverse() const {
+        return ModNumber();
+    }
+    static ModNumber inv(const ModNumber &x) {
+        return ModNumber();
+    }
+    static ModNumber pow(const ModNumber &b, const ModNumber &e) {
+        return ModNumber();
+    }
+    static ModNumber random() {
+        return ModNumber();
+    }
+};
+template <int mid> const UBigNum ModNumber<mid>::Modulus = ConstModulus[mid];
+template <int mid> const int ModNumber<mid>::ByteLen = (Modulus.compactBitLen() + 7) / 8;
+
+typedef ModNumber<0> P256FpNumber;
+typedef ModNumber<1> P256ZqNumber;
+
+
+template<class T1, class T2, int gxcid, int gycid>
+class FpCurve {
+public:
+    typedef T1 FpNumber;
+    typedef T2 ZqNumber;
+    static const FpNumber b;
+    bool isOnCurve(const FpNumber &x, const FpNumber &y) {
+        return false;
+    }
+    class GroupElement
     {
     public:
-        FpNumber getAffineX();
-        GroupElement &operator=(const GroupElement &Y);
-        bool operator==(const GroupElement &Y) const;
-        bool operator!=(const GroupElement &y) const;
-        const GroupElement operator+(const GroupElement &Y) const;
-        const GroupElement operator-(const GroupElement &Y) const;
+        GroupElement() {
+
+        }
+        GroupElement(const FpNumber &x, const FpNumber &y) {
+
+        }
+        GroupElement(const GroupElement &P) {
+
+        }
+        bool isInfinite() const {
+            return false;
+        }
+        Bytes toBytes() const {
+            return Bytes();
+        }
+        FpNumber getAffineX() {
+            return FpNumber();
+        }
+        FpNumber getAffineY() {
+            return FpNumber();
+        }
+        GroupElement &operator=(const GroupElement &Y) {
+            return *this;
+        }
+        bool operator==(const GroupElement &Y) const {
+            return false;
+        }
+        bool operator!=(const GroupElement &y) const {
+            return false;
+        }
+        const GroupElement operator+(const GroupElement &Y) const {
+            return GroupElement();
+        }
+        const GroupElement operator-(const GroupElement &Y) const {
+            return GroupElement();
+        }
+        const GroupElement operator-() const {
+            return GroupElement();
+        }
+        static GroupElement productSimul(const ZqNumber &a, const GroupElement &X, const ZqNumber &b, const GroupElement &Y) {
+            return GroupElement();
+        }
+        static bool isValidEncoding(const Bytes &bytes) {
+            return false;
+        }
+        static GroupElement fromBytes(const Bytes &bytes) {
+            return GroupElement();
+        }
     };
-    MULTIPRECISIONARITHMETICS_API const GroupElement operator*(const ZqNumber &a, const GroupElement &X);
-    MULTIPRECISIONARITHMETICS_API GroupElement simulProduct(const ZqNumber &a, const GroupElement &X, const ZqNumber &b, const GroupElement &Y);
-    MULTIPRECISIONARITHMETICS_API GroupElement generator;
+    static const GroupElement generator;
+    friend const GroupElement operator*(const ZqNumber &a, const GroupElement &X) {
+        return GroupElement();
+    }
 };
+
+template<class T1, class T2, int gxcid, int gycid>
+const typename FpCurve<T1,T2,gxcid,gycid>::GroupElement FpCurve<T1, T2, gxcid, gycid>::generator = FpCurve<T1, T2, gxcid, gycid>::GroupElement();
+
+
+typedef FpCurve<P256FpNumber, P256ZqNumber, 0, 1> CurveP256Group;
+typedef FpCurve<P256FpNumber, P256ZqNumber, 0, 1> CurveP521Group;
+typedef FpCurve<P256FpNumber, P256ZqNumber, 0, 1> CurveK283Group;
+typedef FpCurve<P256FpNumber, P256ZqNumber, 0, 1> CurveB233Group;

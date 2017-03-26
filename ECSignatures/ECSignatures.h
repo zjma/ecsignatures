@@ -11,52 +11,138 @@
 #endif
 
 #include<vector>
+#include "../HashLibrary/HashLibrary.h"
 #include "../MultiPrecisionArithmetics/MultiPrecisionArithmetics.h"
-using namespace MultiPrecisionArithmetics;
 
+extern ECSIGNATURES_API int dummy;
 
+template <typename G>
+class ECDSA_D0 {
+public:
+    static std::pair<Bytes, Bytes> genKey()
+    {
+        auto x = G::ZqNumber::random();
+        auto Y = x*G::generator;
+        return std::make_pair(x.toBytes(), Y.toBytes());
+    }
 
-namespace ECDSA_P256
-{
-    class ECSIGNATURES_API SKey {
-    public:
-        GroupCurveP256::ZqNumber x;
-        SKey(const GroupCurveP256::ZqNumber &x);
-    };
-    class ECSIGNATURES_API PKey {
-    public:
-        GroupCurveP256::GroupElement Y;
-        PKey(const GroupCurveP256::GroupElement &Y);
-    };
-    class ECSIGNATURES_API D1SignInterim {};
-    class ECSIGNATURES_API D2SignInterim {};
-    class ECSIGNATURES_API D3SignInterim {
-    public:
-        GroupCurveP256::ZqNumber rinv;
-        GroupCurveP256::ZqNumber rinvdx;
-    };
-    class ECSIGNATURES_API D3VerifyInterim {
-    public:
-        GroupCurveP256::ZqNumber d;
-        GroupCurveP256::GroupElement ePdX;
-    };
+    static Bytes sign(const Bytes &sk, const Bytes &msg)
+    {
+        auto x = G::ZqNumber::fromBytes(sk);
+        auto r = G::ZqNumber::random();
+        auto rinv = G::ZqNumber::inv(r);
+        auto A = r*G::generator;
+        auto d = A.getAffineX();
+        auto e = G::ZqNumber::fromBytes(vhash(msg, G::ZqNumber::ByteLen));
+        auto z = rinv*(e + d*x);
+        auto dbytes = d.toBytes();
+        auto zbytes = z.toBytes();
+        Bytes ans;
+        ans.insert(ans.end(), dbytes.begin(), dbytes.end());
+        ans.insert(ans.end(), zbytes.begin(), zbytes.end());
+        return ans;
+    }
 
-    ECSIGNATURES_API std::pair<SKey, PKey> keyGen();
-
-    ECSIGNATURES_API Bytes D0Sign(const SKey &sk, const std::vector<uint8_t> &msg);
-    ECSIGNATURES_API bool D0Verify(const PKey &pk, const Bytes &msg, const Bytes &sig);
-
-    ECSIGNATURES_API D1SignInterim D1SignOffline(const SKey &sk);
-    ECSIGNATURES_API Bytes D1SignOnline(const SKey &sk, const D1SignInterim &st, const Bytes &msg);
-    ECSIGNATURES_API bool D1Verify(const PKey &pk, const Bytes &msg, const Bytes &sig);
-
-    ECSIGNATURES_API std::pair<D2SignInterim, Bytes> D2SignOffline(const SKey &sk);
-    ECSIGNATURES_API Bytes D2SignOnline(const SKey &sk, const D2SignInterim &st, const Bytes &msg);
-    ECSIGNATURES_API bool D2Verify(const PKey &pk, const Bytes &msg, const Bytes &sig0, const Bytes &sig1);
-
-    ECSIGNATURES_API std::pair<D3SignInterim, Bytes> D3SignOffline(const SKey &sk);
-    ECSIGNATURES_API Bytes D3SignOnline(const SKey &sk, const D3SignInterim &st, const Bytes &msg);
-    ECSIGNATURES_API D3VerifyInterim D3VerifyOffline(const PKey &pk, const Bytes &msg, const Bytes &sig0);
-    ECSIGNATURES_API bool D3VerifyOnline(const PKey &pk, const D3VerifyInterim &st, const Bytes &sig1);
-
+    static bool verify(const Bytes &pk, const Bytes &msg, const Bytes &sig)
+    {
+        if (!G::GroupElement::isValidEncoding(pk)) return false;
+        if (sig.size() != G::ZqNumber::ByteLen * 2) return false;
+        auto Y = G::GroupElement::fromBytes(pk);
+        auto e = G::ZqNumber::fromBytes(vhash(msg, G::ZqNumber::ByteLen));
+        Bytes dbytes(sig.begin(), sig.begin() + G::ZqNumber::ByteLen);
+        Bytes zbytes(sig.begin() + G::ZqNumber::ByteLen, sig.end());
+        auto d = G::ZqNumber::fromBytes(dbytes);
+        auto z = G::ZqNumber::fromBytes(zbytes);
+        auto zinv = G::ZqNumber::inv(z);
+        auto A = zinv*G::GroupElement::productSimul(e, G::generator, d, Y);
+        auto dd = (G::ZqNumber)A.getAffineX();
+        return dd == d;
+    }
 };
+
+template <typename G>
+class ECDSA_D1 {
+public:
+    static std::pair<Bytes, Bytes> genKey()
+    {
+        auto x = G::ZqNumber::random();
+        auto Y = x*G::generator;
+        return std::make_pair(x.toBytes(), Y.toBytes());
+    }
+
+    static Bytes signOffline(const Bytes &sk)
+    {
+        return Bytes();
+    }
+
+    static Bytes signOnline(const Bytes &sk, const Bytes &st, const Bytes &msg)
+    {
+        return Bytes();
+    }
+
+    static bool verify(const Bytes &pk, const Bytes &msg, const Bytes &sig)
+    {
+        return false;
+    }
+};
+
+template <typename G>
+class ECDSA_D2 {
+public:
+    static std::pair<Bytes, Bytes> genKey()
+    {
+        auto x = G::ZqNumber::random();
+        auto Y = x*G::generator;
+        return std::make_pair(x.toBytes(), Y.toBytes());
+    }
+
+    static std::pair<Bytes, Bytes> signOffline(const Bytes &sk)
+    {
+        return std::make_pair(Bytes(), Bytes());
+    }
+    static Bytes signOnline(const Bytes &sk, const Bytes &st, const Bytes &msg)
+    {
+        return Bytes();
+    }
+    static bool verify(const Bytes &pk, const Bytes &msg, const Bytes &sig0, const Bytes &sig1)
+    {
+        return false;
+    }
+};
+
+template <class G>
+class ECCDSA2_D3 {
+public:
+    static std::pair<Bytes, Bytes> genKey()
+    {
+        auto x = G::ZqNumber::random();
+        auto Y = x*G::generator;
+        return std::make_pair(x.toBytes(), Y.toBytes());
+    }
+
+    static std::pair<Bytes, Bytes> signOffline(const Bytes &sk)
+    {
+        return std::make_pair(Bytes(), Bytes());
+    }
+
+    static Bytes signOnline(const Bytes &sk, const Bytes &st, const Bytes &msg)
+    {
+        return Bytes();
+    }
+
+    static Bytes verifyOffline(const Bytes &pk, const Bytes &msg, const Bytes &sig0)
+    {
+        return Bytes();
+    }
+
+    static bool verifyOnline(const Bytes &pk, const Bytes &st, const Bytes sig1)
+    {
+        return false;
+    }
+};
+
+
+typedef ECDSA_D0<CurveP256Group> ECDSA_P256_D0;
+typedef ECDSA_D1<CurveP521Group> ECDSA_P521_D1;
+typedef ECDSA_D2<CurveK283Group> ECDSA_K283_D2;
+typedef ECCDSA2_D3<CurveB233Group> ECCDSA2_B233_D3;

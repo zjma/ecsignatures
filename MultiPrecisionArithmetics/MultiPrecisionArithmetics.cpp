@@ -7,19 +7,18 @@
 #include<algorithm>
 #include "MultiPrecisionArithmetics.h"
 
-using namespace MultiPrecisionArithmetics;
 
 
 UBigNum::UBigNum(void)
 {
 }
 
-MultiPrecisionArithmetics::UBigNum::UBigNum(uint32_t x)
+UBigNum::UBigNum(uint32_t x)
 {
     val.push_back(x);
 }
 
-MultiPrecisionArithmetics::UBigNum::UBigNum(const Bytes & bytes)
+UBigNum::UBigNum(const Bytes & bytes)
 {
     int o = bytes.size();
     uint32_t acc = 0;
@@ -32,12 +31,12 @@ MultiPrecisionArithmetics::UBigNum::UBigNum(const Bytes & bytes)
     }
 }
 
-MultiPrecisionArithmetics::UBigNum::UBigNum(const UBigNum & x)
+UBigNum::UBigNum(const UBigNum & x)
 {
     val.assign(x.val.begin(), x.val.end());
 }
 
-int MultiPrecisionArithmetics::UBigNum::compactBitLen(void) const
+int UBigNum::compactBitLen(void) const
 {
     int vn = val.size();
     int w = vn;
@@ -180,85 +179,85 @@ int UBigNum::cmp(const UBigNum &a, const UBigNum &b)
     return 0;
 }
 
-UBigNum & MultiPrecisionArithmetics::UBigNum::operator=(const UBigNum & y)
+UBigNum & UBigNum::operator=(const UBigNum & y)
 {
     val.assign(y.val.begin(), y.val.end());
     return *this;
 }
 
-bool MultiPrecisionArithmetics::UBigNum::operator==(const UBigNum & y) const
+bool UBigNum::operator==(const UBigNum & y) const
 {
     return cmp(*this, y) == 0;
 }
 
-bool MultiPrecisionArithmetics::UBigNum::operator!=(const UBigNum & y) const
+bool UBigNum::operator!=(const UBigNum & y) const
 {
     return cmp(*this, y) != 0;
 }
 
-bool MultiPrecisionArithmetics::UBigNum::operator<=(const UBigNum & y) const
+bool UBigNum::operator<=(const UBigNum & y) const
 {
     return cmp(*this, y) <= 0;
 }
 
-bool MultiPrecisionArithmetics::UBigNum::operator<(const UBigNum & y) const
+bool UBigNum::operator<(const UBigNum & y) const
 {
     return cmp(*this, y) < 0;
 }
 
-bool MultiPrecisionArithmetics::UBigNum::operator>(const UBigNum & y) const
+bool UBigNum::operator>(const UBigNum & y) const
 {
     return cmp(*this, y) > 0;
 }
 
-bool MultiPrecisionArithmetics::UBigNum::operator>=(const UBigNum & y) const
+bool UBigNum::operator>=(const UBigNum & y) const
 {
     return cmp(*this, y) >= 0;
 }
 
-UBigNum & MultiPrecisionArithmetics::UBigNum::operator+=(const UBigNum & y)
+UBigNum & UBigNum::operator+=(const UBigNum & y)
 {
     *this = *this + y;
     return *this;
 }
 
-UBigNum & MultiPrecisionArithmetics::UBigNum::operator-=(const UBigNum & y)
+UBigNum & UBigNum::operator-=(const UBigNum & y)
 {
     *this = *this - y;
     return *this;
 }
 
-UBigNum & MultiPrecisionArithmetics::UBigNum::operator*=(const UBigNum & y)
+UBigNum & UBigNum::operator*=(const UBigNum & y)
 {
     (*this) = (*this)*y;
     return *this;
 }
 
-UBigNum & MultiPrecisionArithmetics::UBigNum::operator/=(const UBigNum & y)
+UBigNum & UBigNum::operator/=(const UBigNum & y)
 {
     *this = *this / y;
     return *this;
 }
 
-UBigNum & MultiPrecisionArithmetics::UBigNum::operator%=(const UBigNum & y)
+UBigNum & UBigNum::operator%=(const UBigNum & y)
 {
     *this = *this%y;
     return *this;
 }
 
-UBigNum & MultiPrecisionArithmetics::UBigNum::operator>>=(uint32_t y)
+UBigNum & UBigNum::operator>>=(uint32_t y)
 {
     *this = *this >> y;
     return *this;
 }
 
-UBigNum & MultiPrecisionArithmetics::UBigNum::operator<<=(uint32_t y)
+UBigNum & UBigNum::operator<<=(uint32_t y)
 {
     *this = *this << y;
     return *this;
 }
 
-const UBigNum MultiPrecisionArithmetics::UBigNum::operator+(const UBigNum & y) const
+const UBigNum UBigNum::operator+(const UBigNum & y) const
 {
     int vn = val.size();
     int xwn = (compactBitLen() + 31) / 32;
@@ -278,7 +277,7 @@ const UBigNum MultiPrecisionArithmetics::UBigNum::operator+(const UBigNum & y) c
     return ans;
 }
 
-const UBigNum MultiPrecisionArithmetics::UBigNum::operator-(const UBigNum & y) const
+const UBigNum UBigNum::operator-(const UBigNum & y) const
 {
     if (*this < y) throw NegativeDifference();
     int xwn = (compactBitLen() + 31) / 32;
@@ -297,7 +296,7 @@ const UBigNum MultiPrecisionArithmetics::UBigNum::operator-(const UBigNum & y) c
     return ans;
 }
 
-const UBigNum MultiPrecisionArithmetics::UBigNum::operator*(const UBigNum & y) const
+const UBigNum UBigNum::operator*(const UBigNum & y) const
 {
     UBigNum ans;
     int xwn = (compactBitLen() + 31) / 32;
@@ -327,7 +326,7 @@ const UBigNum MultiPrecisionArithmetics::UBigNum::operator*(const UBigNum & y) c
     return ans;
 }
 
-const UBigNum MultiPrecisionArithmetics::UBigNum::operator/(const UBigNum & y) const
+const UBigNum UBigNum::operator/(const UBigNum & y) const
 {
     if (y == 0) throw DivideByZero();
     UBigNum L = 0;
@@ -339,12 +338,12 @@ const UBigNum MultiPrecisionArithmetics::UBigNum::operator/(const UBigNum & y) c
     return L;
 }
 
-const UBigNum MultiPrecisionArithmetics::UBigNum::operator%(const UBigNum & y) const
+const UBigNum UBigNum::operator%(const UBigNum & y) const
 {
     return *this - (*this / y * y);
 }
 
-const UBigNum MultiPrecisionArithmetics::UBigNum::operator>>(uint32_t y) const
+const UBigNum UBigNum::operator>>(uint32_t y) const
 {
     int bitlen = compactBitLen();
     int old_wordlen = (bitlen + 31) / 32;
@@ -363,7 +362,7 @@ const UBigNum MultiPrecisionArithmetics::UBigNum::operator>>(uint32_t y) const
     return ans;
 }
 
-const UBigNum MultiPrecisionArithmetics::UBigNum::operator<<(uint32_t y) const
+const UBigNum UBigNum::operator<<(uint32_t y) const
 {
     auto old_bitlen = compactBitLen();
     auto target_bitlen = old_bitlen + y;
@@ -381,7 +380,7 @@ const UBigNum MultiPrecisionArithmetics::UBigNum::operator<<(uint32_t y) const
     return ans;
 }
 
-Bytes MultiPrecisionArithmetics::UBigNum::toBytes()
+Bytes UBigNum::toBytes()
 {
     int b = compactBitLen();
     int o = (b + 7) / 8;
@@ -393,117 +392,7 @@ Bytes MultiPrecisionArithmetics::UBigNum::toBytes()
 }
 
 
-using namespace GroupCurveP256;
-
-const FpNumber GroupCurveP256::FpNumber::operator+(const FpNumber & y) const
-{
-    return FpNumber();
-}
-
-const FpNumber GroupCurveP256::FpNumber::operator-(const FpNumber & y) const
-{
-    return FpNumber();
-}
-
-const FpNumber GroupCurveP256::FpNumber::operator*(const FpNumber & y) const
-{
-    return FpNumber();
-}
-
-FpNumber GroupCurveP256::GroupElement::getAffineX()
-{
-    return FpNumber();
-}
-
-GroupElement & GroupCurveP256::GroupElement::operator=(const GroupElement & Y)
-{
-    return *this;
-}
-
-bool GroupCurveP256::GroupElement::operator==(const GroupElement & Y) const
-{
-    return false;
-}
-
-bool GroupCurveP256::GroupElement::operator!=(const GroupElement & y) const
-{
-    return false;
-}
-
-const GroupElement GroupCurveP256::GroupElement::operator+(const GroupElement & Y) const
-{
-    return GroupElement();
-}
-
-const GroupElement GroupCurveP256::GroupElement::operator-(const GroupElement & Y) const
-{
-    return GroupElement();
-}
-
-const GroupElement GroupCurveP256::operator*(const ZqNumber & a, const GroupElement & X)
-{
-    return GroupElement();
-}
-
-GroupElement GroupCurveP256::simulProduct(const ZqNumber & a, const GroupElement & X, const ZqNumber & b, const GroupElement & Y)
-{
-    return GroupElement();
-}
-
-MultiPrecisionArithmetics::P256FpNumber::P256FpNumber()
-{
-}
-
-MultiPrecisionArithmetics::P256FpNumber::P256FpNumber(const UBigNum & x)
-{
-}
-
-P256FpNumber MultiPrecisionArithmetics::P256FpNumber::inverse() const
-{
-    return P256FpNumber();
-}
-
-P256FpNumber MultiPrecisionArithmetics::P256FpNumber::pow(const P256FpNumber & b, const P256FpNumber & e)
-{
-    return P256FpNumber();
-}
-
-const UBigNum P256ZqNumber::q = UBigNum::fromDecString("115792089210356248762697446949407573529996955224135760342422259061068512044369");
-
-MultiPrecisionArithmetics::P256ZqNumber::P256ZqNumber()
-{
-}
-
-MultiPrecisionArithmetics::P256ZqNumber::P256ZqNumber(const UBigNum & x)
-{
-}
-
-const P256ZqNumber MultiPrecisionArithmetics::P256ZqNumber::operator+(const P256ZqNumber & y) const
-{
-    return P256ZqNumber();
-}
-
-const P256ZqNumber MultiPrecisionArithmetics::P256ZqNumber::operator-(const P256ZqNumber & y) const
-{
-    return P256ZqNumber();
-}
-
-const P256ZqNumber MultiPrecisionArithmetics::P256ZqNumber::operator*(const P256ZqNumber & y) const
-{
-    return P256ZqNumber();
-}
-
-P256ZqNumber MultiPrecisionArithmetics::P256ZqNumber::inverse() const
-{
-    return P256ZqNumber();
-}
-
-P256ZqNumber MultiPrecisionArithmetics::P256ZqNumber::pow(const P256ZqNumber & b, const P256ZqNumber & e)
-{
-    return P256ZqNumber();
-}
-
-P256ZqNumber MultiPrecisionArithmetics::P256ZqNumber::random()
-{
-    return P256ZqNumber();
-}
+MULTIPRECISIONARITHMETICS_API UBigNum ConstModulus[2] = {
+    UBigNum::fromDecString("11111"),
+    UBigNum::fromDecString("2222221"),
+};
