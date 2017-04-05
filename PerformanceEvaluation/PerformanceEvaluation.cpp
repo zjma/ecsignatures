@@ -27,26 +27,26 @@ int main()
     }
 
     for (int i = 0; i < usercount; ++i) {
-        auto keypair = ECDSA_K283_D2::genKey();
+        auto keypair = ECDSA_P256_D2::genKey();
         auto &sk = keypair.first;
         auto &pk = keypair.second;
-        auto mid = ECDSA_K283_D2::signOffline(sk);
+        auto mid = ECDSA_P256_D2::signOffline(sk);
         auto &st = mid.first;
         auto &sig0 = mid.second;
-        auto sig1 = ECDSA_K283_D2::signOnline(sk, st, msg);
-        auto accepted = ECDSA_K283_D2::verify(pk, msg, sig0, sig1);
+        auto sig1 = ECDSA_P256_D2::signOnline(sk, st, msg);
+        auto accepted = ECDSA_P256_D2::verify(pk, msg, sig0, sig1);
     }
 
     for (int i = 0; i < usercount; ++i) {
-        auto keypair = ECCDSA2_B233_D3::genKey();
+        auto keypair = ECCDSA2_P521_D3::genKey();
         auto &sk = keypair.first;
         auto &pk = keypair.second;
-        auto sign_mid = ECCDSA2_B233_D3::signOffline(sk);
+        auto sign_mid = ECCDSA2_P521_D3::signOffline(sk);
         auto &sst = sign_mid.first;
         auto &sig0 = sign_mid.second;
-        auto vst = ECCDSA2_B233_D3::verifyOffline(pk, msg, sig0);
-        auto sig1 = ECCDSA2_B233_D3::signOnline(sk, sst, msg);
-        auto accepted = ECCDSA2_B233_D3::verifyOnline(pk, vst, sig1);
+        auto vst = ECCDSA2_P521_D3::verifyOffline(pk, msg, sig0);
+        auto sig1 = ECCDSA2_P521_D3::signOnline(sk, sst, msg);
+        auto accepted = ECCDSA2_P521_D3::verifyOnline(pk, vst, sig1);
     }
 
     return 0;

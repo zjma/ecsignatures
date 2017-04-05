@@ -11,6 +11,7 @@
 #endif
 
 #include<vector>
+#include<tuple>
 #include "../HashLibrary/HashLibrary.h"
 #include "../MultiPrecisionArithmetics/MultiPrecisionArithmetics.h"
 
@@ -47,7 +48,10 @@ public:
     {
         if (!G::GroupElement::isValidEncoding(pk)) return false;
         if (sig.size() != G::ZqNumber::ByteLen * 2) return false;
-        auto Y = G::GroupElement::fromBytes(pk);
+        bool flag;
+        G::GroupElement Y;
+        std::tie(flag, Y) = G::GroupElement::fromBytes(pk);
+        if (flag != 0) return false;
         auto e = G::ZqNumber::fromBytes(vhash(msg, G::ZqNumber::ByteLen));
         Bytes dbytes(sig.begin(), sig.begin() + G::ZqNumber::ByteLen);
         Bytes zbytes(sig.begin() + G::ZqNumber::ByteLen, sig.end());
@@ -144,5 +148,5 @@ public:
 
 typedef ECDSA_D0<CurveP256Group> ECDSA_P256_D0;
 typedef ECDSA_D1<CurveP521Group> ECDSA_P521_D1;
-typedef ECDSA_D2<CurveK283Group> ECDSA_K283_D2;
-typedef ECCDSA2_D3<CurveB233Group> ECCDSA2_B233_D3;
+typedef ECDSA_D2<CurveP256Group> ECDSA_P256_D2;
+typedef ECCDSA2_D3<CurveP521Group> ECCDSA2_P521_D3;

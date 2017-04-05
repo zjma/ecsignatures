@@ -47,6 +47,11 @@ int UBigNum::compactBitLen(void) const
     return (w-1)*32+b;
 }
 
+uint32_t UBigNum::bitat(uint32_t i) const
+{
+    return 0;
+}
+
 const uint64_t DM = 1000000000;
 char *D2H = "0123456789ABCDEF";
 
@@ -392,7 +397,30 @@ Bytes UBigNum::toBytes()
 }
 
 
-MULTIPRECISIONARITHMETICS_API UBigNum ConstModulus[2] = {
-    UBigNum::fromDecString("11111"),
-    UBigNum::fromDecString("2222221"),
+MULTIPRECISIONARITHMETICS_API std::map<ConstantId, UBigNum> BigConstants = {
+    {Zero, UBigNum()},
+    {One,UBigNum(1)},
+    {Two,UBigNum(2)},
+    {Three,UBigNum(3)},
+    { P256FieldModulus, UBigNum::fromDecString("115792089210356248762697446949407573530086143415290314195533631308867097853951") },
+    { P256GroupOrder, UBigNum::fromDecString("115792089210356248762697446949407573529996955224135760342422259061068512044369") },
+    { P256CurveCoeffB, UBigNum::fromHexString("5ac635d8aa3a93e7b3ebbd55769886bc651d06b0cc53b0f63bce3c3e27d2604b") },
+    { P256GenCoorX, UBigNum::fromHexString("6b17d1f2e12c4247f8bce6e563a440f277037d812deb33a0f4a13945d898c296") },
+    { P256GenCoorY, UBigNum::fromHexString("4fe342e2fe1a7f9b8ee7eb4a7c0f9e162bce33576b315ececbb6406837bf51f5") },
+    { P521FieldModulus, UBigNum::fromDecString("6864797660130609714981900799081393217269435300143305409394463459185543183397656052122559640661454554977296311391480858037121987999716643812574028291115057151") },
+    { P521GroupOrder, UBigNum::fromDecString("6864797660130609714981900799081393217269435300143305409394463459185543183397655394245057746333217197532963996371363321113864768612440380340372808892707005449") },
+    { P521CurveCoeffB, UBigNum::fromHexString("051953eb9618e1c9a1f929a21a0b68540eea2da725b99b315f3b8b489918ef109e156193951ec7e937b1652c0bd3bb1bf073573df883d2c34f1ef451fd46b503f00") },
+    { P521GenCoorX, UBigNum::fromHexString("c6858e06b70404e9cd9e3ecb662395b4429c648139053fb521f828af606b4d3dbaa14b5e77efe75928fe1dc127a2ffa8de3348b3c1856a429bf97e7e31c2e5bd66") },
+    { P521GenCoorY, UBigNum::fromHexString("11839296a789a3bc0045c8a5fb42c7d1bd998f54449579b446817afbd17273e662c97ee72995ef42640c550b9013fad0761353c7086a272c24088be94769fd16650") },
 };
+
+UBigNum NaiveModMuler::calc(const UBigNum & a, const UBigNum & b, const UBigNum & m)
+{
+    return a*b%m;
+}
+
+
+std::pair<bool,UBigNum> NaiveModInver::calc(const UBigNum & b, const UBigNum & m)
+{
+    return std::make_pair(false,UBigNum());
+}
