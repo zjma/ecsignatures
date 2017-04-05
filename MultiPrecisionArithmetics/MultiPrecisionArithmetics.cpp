@@ -36,6 +36,11 @@ UBigNum::UBigNum(const UBigNum & x)
     val.assign(x.val.begin(), x.val.end());
 }
 
+UBigNum::UBigNum(const BigNum & x)
+{
+    *this = x.val;
+}
+
 int UBigNum::compactBitLen(void) const
 {
     int vn = val.size();
@@ -414,13 +419,196 @@ MULTIPRECISIONARITHMETICS_API std::map<ConstantId, UBigNum> BigConstants = {
     { P521GenCoorY, UBigNum::fromHexString("11839296a789a3bc0045c8a5fb42c7d1bd998f54449579b446817afbd17273e662c97ee72995ef42640c550b9013fad0761353c7086a272c24088be94769fd16650") },
 };
 
+const UBigNum UBigNum::Zero = BigConstants[ConstantId::Zero];
+const UBigNum UBigNum::One = BigConstants[ConstantId::One];
+const UBigNum UBigNum::Two = BigConstants[ConstantId::Two];
+const UBigNum UBigNum::Three = BigConstants[ConstantId::Three];
+
 UBigNum NaiveModMuler::calc(const UBigNum & a, const UBigNum & b, const UBigNum & m)
 {
     return a*b%m;
 }
 
 
+std::tuple<UBigNum, BigNum, BigNum> extended_euclid(const UBigNum &b, const UBigNum &m) {
+    if (m == 0) return std::make_tuple(b, BigNum::One, BigNum::Zero);
+    UBigNum q = b / m;
+    UBigNum r = b - q*m;
+    UBigNum g;
+    BigNum k1;
+    BigNum k2;
+    std::tie(g, k1, k2) = extended_euclid(m, r);//g=k1*m+k2*r=(k1-k2*q)*m+k2*b
+    return std::make_tuple(g, k2, k1 - k2*q);
+}
+
 std::pair<bool,UBigNum> NaiveModInver::calc(const UBigNum & b, const UBigNum & m)
 {
-    return std::make_pair(false,UBigNum());
+    UBigNum g;
+    BigNum k1, k2;
+    std::tie(g, k1, k2) = extended_euclid(b, m);
+    if (g != 1) return std::make_pair(false, UBigNum::Zero);
+    UBigNum ret = UBigNum(k1%m);
+    return std::make_pair(true, ret);
 }
+
+BigNum::BigNum()
+{
+    sgn = 0;
+}
+
+BigNum::BigNum(const UBigNum & x)
+{
+    val = x;
+    sgn = (val == UBigNum::Zero) ? 0 : 1;
+}
+
+BigNum::BigNum(int sgn, const UBigNum & x)
+{
+    val = x;
+    this->sgn = sgn;
+}
+
+std::string BigNum::toDecString() const
+{
+    std::string pref = (this->sgn == -1) ? "-" : "";
+    auto content = this->val.toDecString();
+    return pref + content;
+}
+
+std::string BigNum::toHexString() const
+{
+    std::string pref = (this->sgn == -1) ? "-" : "";
+    auto content = this->val.toHexString();
+    return pref + content;
+}
+
+BigNum BigNum::fromHexString(const std::string & s)
+{
+    return UBigNum();
+}
+
+BigNum BigNum::fromDecString(const std::string &)
+{
+    return UBigNum();
+}
+
+
+int BigNum::cmp(const BigNum & x, const BigNum & y)
+{
+    if (x.sgn>y.sgn) return 1;
+    if (x.sgn < y.sgn) return -1;
+    return UBigNum::cmp(x.val, y.val)*x.sgn;
+}
+
+BigNum & BigNum::operator=(const BigNum & y)
+{
+    val = y.val;
+    sgn = y.sgn;
+    return *this;
+}
+
+bool BigNum::operator==(const BigNum & y) const
+{
+    return cmp(*this, y) == 0;
+}
+
+bool BigNum::operator!=(const BigNum & y) const
+{
+    return cmp(*this, y) != 0;
+}
+
+bool BigNum::operator<=(const BigNum & y) const
+{
+    return cmp(*this, y) <= 0;
+}
+
+bool BigNum::operator<(const BigNum & y) const
+{
+    return cmp(*this, y) < 0;
+}
+
+bool BigNum::operator>(const BigNum & y) const
+{
+    return cmp(*this, y) > 0;
+}
+
+bool BigNum::operator>=(const BigNum & y) const
+{
+    return cmp(*this, y) > 0;
+}
+
+BigNum & BigNum::operator+=(const BigNum & y)
+{
+    *this = *this + y;
+    return *this;
+}
+
+BigNum & BigNum::operator-=(const BigNum & y)
+{
+    *this = *this - y;
+    return *this;
+}
+
+BigNum & BigNum::operator*=(const BigNum & y)
+{
+    *this = *this * y;
+    return *this;
+}
+
+BigNum & BigNum::operator/=(const BigNum & y)
+{
+    *this = *this / y;
+    return *this;
+}
+
+const BigNum operator+(const BigNum & a, const BigNum & b)
+{
+    if (a.sgn*b.sgn < 0) {
+        auto c = UBigNum::cmp(a.val, b.val);
+        if (c == 0) return BigNum::Zero;
+        if (c == 1) return BigNum(1, a.val - b.val);
+        return BigNum(-1, b.val - a.val);
+    }
+    UBigNum newval = a.val + b.val;
+    int newsgn = (a.sgn == 1 || b.sgn == 1) ? 1 : (a.sgn == -1 || b.sgn == -1) ? -1 : 0;
+    return BigNum(newsgn, newval);
+}
+
+const BigNum operator-(const BigNum & a, const BigNum & b)
+{
+    if (a.sgn*b.sgn < 0) return BigNum(a.sgn, a.val + b.val);
+    auto c = UBigNum::cmp(a.val, b.val);
+    UBigNum newval = (c == 0) ? (UBigNum::Zero) : (c > 0) ? (a.val - b.val) : (b.val - a.val);
+    if (a.sgn == b.sgn) {
+        auto newsgn = (c == 0) ? 0 : (c > 0) ? a.sgn : -a.sgn;
+        return BigNum(newsgn, newval);
+    }
+    
+    int newsgn = a.sgn - b.sgn;
+    return BigNum(newsgn, newval);
+}
+
+const BigNum operator*(const BigNum & a, const BigNum & b)
+{
+    return BigNum(a.sgn*b.sgn, a.val*b.val);
+}
+
+const BigNum operator/(const BigNum & a, const BigNum & b)
+{
+    if (b.sgn == 0) throw DivideByZero();
+    auto newsgn = a.sgn*b.sgn;
+    auto newval = a.val / b.val;
+    return BigNum(newsgn, newval);
+}
+
+const BigNum operator%(const BigNum & a, const UBigNum & m)
+{
+    BigNum n(m);
+    auto q = a / n;
+    auto r = a - q*n;
+    if (r < BigNum::Zero) r += n;
+    return r;
+}
+
+const BigNum BigNum::Zero(UBigNum::Zero);
+const BigNum BigNum::One(UBigNum::One);

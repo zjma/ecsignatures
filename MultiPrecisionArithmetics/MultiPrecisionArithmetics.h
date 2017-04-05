@@ -15,12 +15,14 @@
 #include<map>
 
 typedef std::vector<uint8_t> Bytes;
-
+typedef std::vector<uint32_t> Words;
 
 
 class MULTIPRECISIONARITHMETICS_API InvalidArgument : public std::exception {};
 class MULTIPRECISIONARITHMETICS_API NegativeDifference : public std::exception {};
 class MULTIPRECISIONARITHMETICS_API DivideByZero : public std::exception {};
+
+class MULTIPRECISIONARITHMETICS_API BigNum;
 
 class MULTIPRECISIONARITHMETICS_API UBigNum {
 protected:
@@ -37,6 +39,8 @@ public:
 
     ///<summary>Create a UbigNum by copying the value from an old one.</summary>
     UBigNum(const UBigNum &x);
+
+    UBigNum(const BigNum &x);
 
     ///<summary>Create a decimal representation without redundant leading 0.</summary>
     std::string toDecString() const;
@@ -91,6 +95,60 @@ public:
     ///The returned array will be empty if the current value is 0.
     ///</remarks>
     Bytes toBytes();
+
+    static const UBigNum Zero;
+    static const UBigNum One;
+    static const UBigNum Two;
+    static const UBigNum Three;
+};
+
+class MULTIPRECISIONARITHMETICS_API BigNum {
+public:
+    UBigNum val;
+    int sgn;
+    BigNum();
+    BigNum(const UBigNum &x);
+    BigNum(int sgn, const UBigNum &x);
+
+    ///<summary>Create a decimal representation without redundant leading 0.</summary>
+    std::string toDecString() const;
+
+    ///<summary>Create a hexadecimal representation without redundant leading 0.</summary>
+    std::string toHexString() const;
+
+    ///<summary>Create a UBigNum from a hexadecimal representation.</summary>
+    ///<remarks>Argument s is considered valid iff s is in {0,...,9,a,...,f}*.</remarks>
+    ///<exception cref="MultiPrecisionArithmetics::InvalidArgument">Thrown when s is not a valid hexadecimal representation.</exception>
+    static BigNum fromHexString(const std::string &s);
+
+    ///<summary>Create a UBigNum from a decimal representation.</summary>
+    ///<remarks>Argument s is considered valid iff s is in {0,...,9}*.</remarks>
+    ///<exception cref="MultiPrecisionArithmetics::InvalidArgument">Thrown when s is not a valid decimal representation.</exception>
+    static BigNum fromDecString(const std::string&);
+
+    ///<summary>Compare two UBigNums x and y.</summary>
+    ///<returns>-1 if x&lt;y, or 0 if x=y, or 1 if x&gt;y</returns>
+    static int cmp(const BigNum &x, const BigNum &y);
+
+    BigNum &operator=(const BigNum &y);
+    bool operator==(const BigNum &y) const;
+    bool operator!=(const BigNum &y) const;
+    bool operator<=(const BigNum &y) const;
+    bool operator<(const BigNum &y) const;
+    bool operator>(const BigNum &y) const;
+    bool operator>=(const BigNum &y) const;
+    BigNum& operator+=(const BigNum &y);
+    BigNum& operator-=(const BigNum &y);
+    BigNum& operator*=(const BigNum &y);
+    BigNum& operator/=(const BigNum &y);
+    friend const BigNum operator+(const BigNum &a, const BigNum &b);
+    friend const BigNum operator-(const BigNum &a, const BigNum &b);
+    friend const BigNum operator*(const BigNum &a, const BigNum &b);
+    friend const BigNum operator/(const BigNum &a, const BigNum &b);
+    friend const BigNum operator%(const BigNum &a, const UBigNum &m);
+
+    static const BigNum Zero;
+    static const BigNum One;
 };
 
 enum ConstantId {
